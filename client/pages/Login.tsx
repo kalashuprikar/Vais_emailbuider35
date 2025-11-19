@@ -615,33 +615,78 @@ export default function Login() {
               </p>
             </div>
 
-            {/* Feature Highlights - Compact */}
+            {/* Customer Testimonials */}
             <div
-              className={`grid grid-cols-2 gap-4 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+              className={`space-y-4 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
               style={{ transitionDelay: "200ms" }}
             >
-              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
-                <Brain className="h-5 w-5 text-valasys-orange mb-2" />
-                <h4 className="font-semibold text-sm text-valasys-gray-900">AI Insights</h4>
-                <p className="text-xs text-valasys-gray-600 mt-1">Intelligent analysis</p>
+              {/* Testimonial 1 */}
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-white/30 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-valasys-orange text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-valasys-gray-700 mb-3 leading-relaxed">
+                  "VAIS completely transformed how we prioritize leads. ROI increased by 40% in just 3 months."
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-valasys-orange to-valasys-orange-light flex items-center justify-center text-white text-xs font-bold">
+                    JM
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-valasys-gray-900">James Martin</p>
+                    <p className="text-xs text-valasys-gray-600">VP Sales, TechCorp</p>
+                  </div>
+                </div>
               </div>
 
-              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
-                <TrendingUp className="h-5 w-5 text-valasys-orange mb-2" />
-                <h4 className="font-semibold text-sm text-valasys-gray-900">Smart Scoring</h4>
-                <p className="text-xs text-valasys-gray-600 mt-1">Lead ranking</p>
+              {/* Testimonial 2 */}
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-white/30 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-valasys-orange text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-valasys-gray-700 mb-3 leading-relaxed">
+                  "The AI insights are incredible. We're closing deals 2x faster with better quality leads."
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-valasys-blue to-valasys-blue-light flex items-center justify-center text-white text-xs font-bold">
+                    SR
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-valasys-gray-900">Sarah Rodriguez</p>
+                    <p className="text-xs text-valasys-gray-600">Director, Sales Growth</p>
+                  </div>
+                </div>
               </div>
 
-              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
-                <Megaphone className="h-5 w-5 text-valasys-orange mb-2" />
-                <h4 className="font-semibold text-sm text-valasys-gray-900">Campaigns</h4>
-                <p className="text-xs text-valasys-gray-600 mt-1">Real-time tracking</p>
-              </div>
-
-              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
-                <Activity className="h-5 w-5 text-valasys-orange mb-2" />
-                <h4 className="font-semibold text-sm text-valasys-gray-900">Analytics</h4>
-                <p className="text-xs text-valasys-gray-600 mt-1">Instant reports</p>
+              {/* Testimonial 3 */}
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-white/30 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-valasys-orange text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-valasys-gray-700 mb-3 leading-relaxed">
+                  "Best investment we've made. Immediate impact on pipeline quality and team efficiency."
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-valasys-green to-valasys-green-light flex items-center justify-center text-white text-xs font-bold">
+                    MK
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-valasys-gray-900">Michael Kim</p>
+                    <p className="text-xs text-valasys-gray-600">CEO, Growth Ventures</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
