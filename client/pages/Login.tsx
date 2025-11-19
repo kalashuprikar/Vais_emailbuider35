@@ -542,118 +542,42 @@ export default function Login() {
       </div>
 
       {/* Right Side - Video & Integrations */}
-      <div className="hidden lg:flex relative bg-gradient-to-br from-valasys-orange/8 via-white to-valasys-blue/8 backdrop-blur-md">
-        {/* Background overlay with premium feel */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-valasys-blue/5"></div>
+      <div className="hidden lg:flex relative bg-gradient-to-br from-valasys-orange/5 via-white to-valasys-blue/5 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-valasys-orange/10 blur-3xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-valasys-blue/10 blur-3xl"></div>
+        </div>
 
-        <div className="relative z-10 flex flex-col justify-between w-full h-full p-12">
-          {/* Top Section - Welcome & Features */}
-          <div className="space-y-10">
-            {/* Welcome Header */}
-            <div
-              className={`space-y-3 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"}`}
-            >
-              <p className="text-sm font-semibold text-valasys-orange tracking-wide uppercase">
-                Welcome Back
-              </p>
-              <h2 className="text-4xl font-bold text-valasys-gray-900 leading-tight">
-                Your AI Scoring <br />
-                <span className="text-valasys-orange">Platform Awaits</span>
-              </h2>
-              <p className="text-base text-valasys-gray-600 leading-relaxed max-w-lg pt-2">
-                Unlock deeper insights, accelerate decision-making, and drive meaningful business outcomes with VAIS.
-              </p>
-            </div>
-
-            {/* Feature Cards Grid */}
-            <div
-              className={`grid grid-cols-2 gap-5 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"}`}
-              style={{ transitionDelay: "100ms" }}
-            >
-              {/* Feature Card 1 */}
-              <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300 cursor-default">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 bg-gradient-to-br from-valasys-orange/15 to-valasys-orange/5 rounded-xl group-hover:from-valasys-orange/20 group-hover:to-valasys-orange/10 transition-all duration-300">
-                    <Brain className="w-5 h-5 text-valasys-orange" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-sm text-valasys-gray-900 mb-1.5">
-                  AI-Powered Insights
-                </h3>
-                <p className="text-xs text-valasys-gray-600 leading-relaxed">
-                  Advanced algorithms delivering actionable intelligence
-                </p>
-              </div>
-
-              {/* Feature Card 2 */}
-              <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300 cursor-default">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 bg-gradient-to-br from-valasys-orange/15 to-valasys-orange/5 rounded-xl group-hover:from-valasys-orange/20 group-hover:to-valasys-orange/10 transition-all duration-300">
-                    <TrendingUp className="w-5 h-5 text-valasys-orange" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-sm text-valasys-gray-900 mb-1.5">
-                  Smart Scoring
-                </h3>
-                <p className="text-xs text-valasys-gray-600 leading-relaxed">
-                  AI-driven lead and account ranking
-                </p>
-              </div>
-
-              {/* Feature Card 3 */}
-              <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300 cursor-default">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 bg-gradient-to-br from-valasys-orange/15 to-valasys-orange/5 rounded-xl group-hover:from-valasys-orange/20 group-hover:to-valasys-orange/10 transition-all duration-300">
-                    <Megaphone className="w-5 h-5 text-valasys-orange" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-sm text-valasys-gray-900 mb-1.5">
-                  Campaign Tracking
-                </h3>
-                <p className="text-xs text-valasys-gray-600 leading-relaxed">
-                  Monitor campaigns with real-time insights
-                </p>
-              </div>
-
-              {/* Feature Card 4 */}
-              <div className="group bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40 hover:border-valasys-orange/30 hover:bg-white/80 transition-all duration-300 cursor-default">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 bg-gradient-to-br from-valasys-orange/15 to-valasys-orange/5 rounded-xl group-hover:from-valasys-orange/20 group-hover:to-valasys-orange/10 transition-all duration-300">
-                    <Activity className="w-5 h-5 text-valasys-orange" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-sm text-valasys-gray-900 mb-1.5">
-                  Live Analytics
-                </h3>
-                <p className="text-xs text-valasys-gray-600 leading-relaxed">
-                  Real-time data processing and reports
-                </p>
-              </div>
-            </div>
+        <div className="relative z-10 flex flex-col w-full h-full px-16 py-12">
+          {/* Header Section */}
+          <div
+            className={`mb-8 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "-translate-y-6 opacity-0"}`}
+          >
+            <p className="text-sm font-semibold text-valasys-orange tracking-widest uppercase mb-2">
+              Welcome Back
+            </p>
+            <h2 className="text-3xl font-bold text-valasys-gray-900 leading-tight">
+              Your AI Scoring <br />
+              <span className="text-valasys-orange">Revolution Starts Here</span>
+            </h2>
           </div>
 
-          {/* Bottom Section - Video & Trust Badges */}
-          <div className="space-y-8 pt-4">
-            {/* Video Section */}
+          {/* Main Content Container */}
+          <div className="flex-1 flex flex-col justify-center space-y-8">
+            {/* Premium Video Showcase */}
             <div
-              className={`space-y-4 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
-              style={{ transitionDelay: "200ms" }}
+              className={`transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+              style={{ transitionDelay: "100ms" }}
             >
-              <div className="flex items-center space-x-2">
-                <Play className="h-4 w-4 text-valasys-orange" />
-                <h3 className="text-sm font-semibold text-valasys-gray-900">
-                  See VAIS in Action
-                </h3>
-              </div>
-
-              {/* Video Container */}
-              <div className="relative rounded-xl overflow-hidden shadow-lg bg-black/5 border border-white/20 group hover:border-valasys-orange/30 transition-all duration-300">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
+                {/* Video with overlay */}
                 <video
                   autoPlay
                   muted
                   loop
                   playsInline
-                  className="w-full h-48 object-cover group-hover:brightness-110 transition-all duration-300"
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                   poster="/placeholder.svg"
                 >
                   <source
@@ -661,38 +585,92 @@ export default function Login() {
                     type="video/mp4"
                   />
                 </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent group-hover:from-black/5 transition-all duration-300"></div>
+
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+
+                {/* Play Icon Badge */}
+                <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-4 rounded-full bg-valasys-orange/90 backdrop-blur-sm group-hover:bg-valasys-orange transition-colors duration-300">
+                    <Play className="h-6 w-6 text-white" fill="currentColor" />
+                  </div>
+                </div>
+
+                {/* Stats Badges Overlay */}
+                <div className="absolute bottom-4 left-4 right-4 flex gap-3">
+                  <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
+                    <p className="font-semibold text-valasys-gray-900">AI-Powered</p>
+                  </div>
+                  <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
+                    <p className="font-semibold text-valasys-gray-900">Real-time</p>
+                  </div>
+                  <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
+                    <p className="font-semibold text-valasys-gray-900">Smart</p>
+                  </div>
+                </div>
               </div>
+
+              <p className="text-sm text-valasys-gray-600 mt-4 text-center">
+                See how VAIS transforms your sales intelligence
+              </p>
             </div>
 
-            {/* Association & Trust Section */}
+            {/* Feature Highlights - Compact */}
             <div
-              className={`transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
-              style={{ transitionDelay: "300ms" }}
+              className={`grid grid-cols-2 gap-4 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+              style={{ transitionDelay: "200ms" }}
             >
-              <div className="border-t border-white/20 pt-6 space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Sparkles className="h-4 w-4 text-valasys-orange" />
-                  <h3 className="text-sm font-semibold text-valasys-gray-900">
-                    Trusted Partners
-                  </h3>
-                </div>
-                <AssociationPartners />
+              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
+                <Brain className="h-5 w-5 text-valasys-orange mb-2" />
+                <h4 className="font-semibold text-sm text-valasys-gray-900">AI Insights</h4>
+                <p className="text-xs text-valasys-gray-600 mt-1">Intelligent analysis</p>
               </div>
+
+              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
+                <TrendingUp className="h-5 w-5 text-valasys-orange mb-2" />
+                <h4 className="font-semibold text-sm text-valasys-gray-900">Smart Scoring</h4>
+                <p className="text-xs text-valasys-gray-600 mt-1">Lead ranking</p>
+              </div>
+
+              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
+                <Megaphone className="h-5 w-5 text-valasys-orange mb-2" />
+                <h4 className="font-semibold text-sm text-valasys-gray-900">Campaigns</h4>
+                <p className="text-xs text-valasys-gray-600 mt-1">Real-time tracking</p>
+              </div>
+
+              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30 group hover:bg-white/70 transition-all duration-300">
+                <Activity className="h-5 w-5 text-valasys-orange mb-2" />
+                <h4 className="font-semibold text-sm text-valasys-gray-900">Analytics</h4>
+                <p className="text-xs text-valasys-gray-600 mt-1">Instant reports</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section - Partnerships & Trust */}
+          <div
+            className={`space-y-4 mt-8 pt-6 border-t border-white/20 transform transition-all duration-700 ease-out ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+            style={{ transitionDelay: "300ms" }}
+          >
+            {/* Partners Section */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="h-4 w-4 text-valasys-orange" />
+                <p className="text-xs font-semibold text-valasys-gray-900 uppercase tracking-wide">
+                  Trusted By Industry Leaders
+                </p>
+              </div>
+              <AssociationPartners />
             </div>
 
             {/* Trust Badges */}
-            <div
-              className={`flex items-center gap-4 pt-2 transform transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
-              style={{ transitionDelay: "400ms" }}
-            >
-              <div className="flex items-center space-x-2 text-xs">
-                <CheckCircle className="h-3.5 w-3.5 text-valasys-green" />
-                <span className="text-valasys-gray-700">SOC 2 Compliant</span>
+            <div className="flex items-center gap-6 pt-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-valasys-green flex-shrink-0" />
+                <span className="text-xs text-valasys-gray-700 font-medium">SOC 2 Compliant</span>
               </div>
-              <div className="flex items-center space-x-2 text-xs">
-                <Shield className="h-3.5 w-3.5 text-valasys-blue" />
-                <span className="text-valasys-gray-700">GDPR Ready</span>
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-valasys-blue flex-shrink-0" />
+                <span className="text-xs text-valasys-gray-700 font-medium">GDPR Ready</span>
               </div>
             </div>
           </div>
