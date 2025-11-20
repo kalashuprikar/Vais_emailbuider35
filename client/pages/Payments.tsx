@@ -30,6 +30,8 @@ import {
   Trash2,
   CheckCircle,
   Plus,
+  Wifi,
+  Shield,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -256,38 +258,27 @@ type SortField =
 
 type SortDir = "asc" | "desc";
 
-function getCardIcon(paymentMethod: PaymentMethod) {
+function getCardNetwork(paymentMethod: PaymentMethod) {
   if (paymentMethod.type === "paypal") {
-    return "🅿️";
-  } else if (paymentMethod.type === "credit_card" || paymentMethod.type === "debit_card") {
-    switch (paymentMethod.cardNetwork) {
-      case "Visa":
-        return "💳";
-      case "Mastercard":
-        return "💳";
-      case "American Express":
-        return "💳";
-      default:
-        return "💳";
-    }
+    return "PayPal";
   }
-  return "💳";
+  return paymentMethod.cardNetwork || "Card";
 }
 
-function getCardColor(cardNetwork?: string) {
+function getCardGradient(cardNetwork?: string) {
   switch (cardNetwork) {
     case "Visa":
-      return "from-blue-600 to-blue-700";
+      return "from-blue-500 via-blue-600 to-blue-700";
     case "Mastercard":
-      return "from-red-600 to-orange-600";
+      return "from-red-500 via-orange-500 to-red-600";
     case "American Express":
-      return "from-blue-800 to-cyan-700";
+      return "from-slate-700 via-slate-800 to-slate-900";
     default:
-      return "from-gray-600 to-gray-700";
+      return "from-purple-500 via-pink-500 to-purple-600";
   }
 }
 
-function PaymentMethodCard({
+function ModernPaymentCard({
   method,
   onDelete,
   onSetDefault,
@@ -297,122 +288,153 @@ function PaymentMethodCard({
   onSetDefault: (id: string) => void;
 }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const isPayPal = method.type === "paypal";
 
   return (
     <>
-      <div
-        className={`relative rounded-xl overflow-hidden h-56 bg-gradient-to-br ${getCardColor(method.cardNetwork)} text-white shadow-lg hover:shadow-xl transition-shadow`}
-      >
-        <div className="absolute inset-0 opacity-10 bg-pattern"></div>
-
-        <div className="relative p-6 flex flex-col h-full justify-between">
-          <div className="flex items-start justify-between">
-            <div className="text-2xl">{getCardIcon(method)}</div>
-            {method.isDefault && (
-              <div className="flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-xs font-semibold">Default</span>
-              </div>
-            )}
+      <div className="group relative">
+        <div
+          className={`relative rounded-2xl overflow-hidden h-52 bg-gradient-to-br ${getCardGradient(method.cardNetwork)} text-white shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105`}
+        >
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20 blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16 blur-2xl"></div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm opacity-75 mb-1">Cardholder Name</p>
-              <p className="text-base font-semibold">{method.cardholderName}</p>
-            </div>
-
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-sm opacity-75 mb-1">Card Number</p>
-                <p className="text-xl font-mono tracking-wider">
-                  •••• •••• •••• {method.cardNumber}
-                </p>
+          <div className="relative p-6 flex flex-col h-full justify-between">
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <div className="text-xs font-semibold opacity-75 tracking-wider">
+                  {isPayPal ? "PAYPAL" : "CREDIT CARD"}
+                </div>
+                <div className="text-lg font-bold">
+                  {getCardNetwork(method)}
+                </div>
               </div>
-              {method.type !== "paypal" && (
-                <div className="text-right">
-                  <p className="text-xs opacity-75 mb-1">Expires</p>
-                  <p className="font-mono font-semibold">{method.expiryDate}</p>
+              {method.isDefault && (
+                <div className="bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30">
+                  <span className="flex items-center gap-1.5 text-xs font-bold">
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    DEFAULT
+                  </span>
                 </div>
               )}
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs opacity-70 font-medium mb-2">
+                  CARDHOLDER
+                </p>
+                <p className="text-sm font-semibold tracking-wide">
+                  {method.cardholderName.toUpperCase()}
+                </p>
+              </div>
+
+              <div className="flex items-end justify-between">
+                <div className="flex-1">
+                  <p className="text-xs opacity-70 font-medium mb-1">
+                    {isPayPal ? "EMAIL" : "CARD NUMBER"}
+                  </p>
+                  <p className="text-lg font-mono font-bold tracking-widest">
+                    {isPayPal
+                      ? method.cardNumber
+                      : `•••• •••• •••• ${method.cardNumber}`}
+                  </p>
+                </div>
+                {!isPayPal && (
+                  <div className="text-right">
+                    <p className="text-xs opacity-70 font-medium mb-1">VALID</p>
+                    <p className="font-mono font-bold text-sm">
+                      {method.expiryDate}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-3 space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <div className="text-gray-600">
+      <div className="mt-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-medium text-gray-700">
             {method.status === "active" && (
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                Active
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span className="font-semibold text-green-600">Active</span>
+              </div>
             )}
             {method.status === "expired" && (
-              <span className="flex items-center gap-1 text-red-600">
-                <span className="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
-                Expired
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-red-500"></span>
+                <span className="font-semibold text-red-600">Expired</span>
+              </div>
             )}
             {method.status === "inactive" && (
-              <span className="flex items-center gap-1 text-gray-400">
-                <span className="inline-block w-2 h-2 bg-gray-400 rounded-full"></span>
-                Inactive
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-gray-400"></span>
+                <span className="font-semibold text-gray-500">Inactive</span>
+              </div>
             )}
           </div>
-          <div className="text-gray-500">
-            Last used: {method.lastUsed}
+          <div className="text-xs text-gray-500 font-medium">
+            Used {method.lastUsed}
           </div>
         </div>
 
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-2 pt-1">
           {!method.isDefault && (
             <Button
               variant="outline"
               size="sm"
-              className="flex-1"
+              className="flex-1 h-9 border-valasys-orange text-valasys-orange hover:bg-orange-50"
               onClick={() => onSetDefault(method.id)}
             >
-              Set as Default
+              Set Default
             </Button>
           )}
           <Button
             variant="outline"
             size="sm"
-            className={method.isDefault ? "w-full" : ""}
+            className={`h-9 border-red-200 text-red-600 hover:bg-red-50 ${method.isDefault ? "w-full" : ""}`}
             onClick={() => setDeleteOpen(true)}
           >
-            <Trash2 className="w-4 h-4 mr-1" />
-            Delete
+            <Trash2 className="w-4 h-4" />
           </Button>
         </div>
       </div>
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="sm:max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Payment Method</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this payment method? This action
-              cannot be undone.
+            <AlertDialogTitle className="text-xl">
+              Delete Payment Method?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base mt-2">
+              This action cannot be undone. You won't be able to use this
+              payment method for future transactions.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="bg-gray-50 p-3 rounded-lg my-4">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 my-4">
             <p className="text-sm font-semibold text-gray-900">
-              {method.cardNetwork || "PayPal"} •••• {method.cardNumber}
+              {getCardNetwork(method)} •••• {method.cardNumber}
             </p>
-            <p className="text-xs text-gray-600 mt-1">{method.cardholderName}</p>
+            <p className="text-xs text-gray-600 mt-1 font-medium">
+              {method.cardholderName}
+            </p>
           </div>
           <div className="flex gap-3 justify-end">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="h-10">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 onDelete(method.id);
                 setDeleteOpen(false);
               }}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 h-10"
             >
               Delete
             </AlertDialogAction>
@@ -531,9 +553,7 @@ export default function Payments() {
   };
 
   const handleDeletePaymentMethod = (id: string) => {
-    setPaymentMethodsList((prev) =>
-      prev.filter((pm) => pm.id !== id)
-    );
+    setPaymentMethodsList((prev) => prev.filter((pm) => pm.id !== id));
   };
 
   const handleSetDefaultPaymentMethod = (id: string) => {
@@ -575,93 +595,124 @@ export default function Payments() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-valasys-gray-900 flex items-center gap-2">
-              <CreditCard className="w-6 h-6 text-valasys-orange" /> Payments
-            </h1>
-            <p className="text-sm text-valasys-gray-600">
-              Manage your payment methods and view transaction history.
-            </p>
-          </div>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-valasys-orange to-orange-600 rounded-xl">
+              <CreditCard className="w-6 h-6 text-white" />
+            </div>
+            Payments & Billing
+          </h1>
+          <p className="text-gray-600 mt-2 font-medium">
+            Manage your payment methods and review transaction history
+          </p>
         </div>
 
         <Tabs defaultValue="payment-methods" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="payment-methods">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1">
+            <TabsTrigger
+              value="payment-methods"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
               <CreditCard className="w-4 h-4 mr-2" />
               Payment Methods
             </TabsTrigger>
-            <TabsTrigger value="payment-history">
+            <TabsTrigger
+              value="payment-history"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
               <Download className="w-4 h-4 mr-2" />
-              Payment History
+              Transaction History
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="payment-methods" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Saved Payment Methods</CardTitle>
-                  <Button className="bg-valasys-orange hover:bg-valasys-orange/90">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Payment Method
-                  </Button>
+          <TabsContent value="payment-methods" className="space-y-6 mt-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Saved Cards & Methods
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  {paymentMethodsList.length} payment method
+                  {paymentMethodsList.length !== 1 ? "s" : ""} on file
+                </p>
+              </div>
+              <Button className="bg-gradient-to-r from-valasys-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all h-11">
+                <Plus className="w-5 h-5 mr-2" />
+                Add New Card
+              </Button>
+            </div>
+
+            {paymentMethodsList.length === 0 ? (
+              <div className="text-center py-16 px-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 rounded-full mb-4">
+                  <CreditCard className="w-8 h-8 text-valasys-orange" />
                 </div>
-              </CardHeader>
-              <CardContent>
-                {paymentMethodsList.length === 0 ? (
-                  <div className="text-center py-12">
-                    <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-600">No payment methods saved</p>
-                    <p className="text-sm text-gray-500 mb-4">
-                      Add a payment method to get started
-                    </p>
-                    <Button className="bg-valasys-orange hover:bg-valasys-orange/90">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Payment Method
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {paymentMethodsList.map((method) => (
-                      <PaymentMethodCard
-                        key={method.id}
-                        method={method}
-                        onDelete={handleDeletePaymentMethod}
-                        onSetDefault={handleSetDefaultPaymentMethod}
-                      />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                <p className="text-lg font-semibold text-gray-900 mb-1">
+                  No payment methods yet
+                </p>
+                <p className="text-gray-600 mb-6">
+                  Add your first payment method to get started
+                </p>
+                <Button className="bg-gradient-to-r from-valasys-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white h-10">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Payment Method
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paymentMethodsList.map((method) => (
+                  <ModernPaymentCard
+                    key={method.id}
+                    method={method}
+                    onDelete={handleDeletePaymentMethod}
+                    onSetDefault={handleSetDefaultPaymentMethod}
+                  />
+                ))}
+              </div>
+            )}
           </TabsContent>
 
-          <TabsContent value="payment-history" className="space-y-6">
-            <Card className="mb-6">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-lg">
+          <TabsContent value="payment-history" className="space-y-6 mt-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Transaction History
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  View and download your invoices
+                </p>
+              </div>
+            </div>
+
+            <Card className="bg-white border-gray-200">
+              <CardHeader className="pb-4 border-b border-gray-200">
+                <CardTitle className="flex items-center text-base font-semibold">
                   <Filter className="w-5 h-5 mr-2 text-valasys-orange" />
                   Search & Filters
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-col md:flex-row gap-4 items-end">
+              <CardContent className="pt-6">
+                <div className="flex flex-col md:flex-row gap-3 items-end">
                   <div className="w-full flex-1">
+                    <label className="text-sm font-semibold text-gray-700 block mb-2">
+                      Search
+                    </label>
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search invoices, methods, provider..."
-                        className="pl-10"
+                        placeholder="Invoice ID, method, provider..."
+                        className="pl-10 h-10"
                         aria-label="Search payments"
                       />
                     </div>
                   </div>
                   <div className="w-full flex-1">
+                    <label className="text-sm font-semibold text-gray-700 block mb-2">
+                      Date Range
+                    </label>
                     <RsuiteDateRangePicker
                       value={pickerValue as any}
                       onChange={(val) => setPickerValue(val as any)}
@@ -684,8 +735,11 @@ export default function Payments() {
                     />
                   </div>
                   <div className="w-full flex-1">
+                    <label className="text-sm font-semibold text-gray-700 block mb-2">
+                      Type
+                    </label>
                     <Select value={typeFilter} onValueChange={setTypeFilter}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="All Types" />
                       </SelectTrigger>
                       <SelectContent>
@@ -699,8 +753,11 @@ export default function Payments() {
                     </Select>
                   </div>
                   <div className="w-full flex-1">
+                    <label className="text-sm font-semibold text-gray-700 block mb-2">
+                      Plan
+                    </label>
                     <Select value={planFilter} onValueChange={setPlanFilter}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="All Plans" />
                       </SelectTrigger>
                       <SelectContent>
@@ -719,6 +776,7 @@ export default function Payments() {
                     onClick={resetFilters}
                     title="Reset filters"
                     aria-label="Reset filters"
+                    className="h-10 w-10 border-gray-300"
                   >
                     <RefreshCw className="h-4 w-4" />
                   </Button>
@@ -726,49 +784,46 @@ export default function Payments() {
               </CardContent>
             </Card>
 
-            <Card className="border border-valasys-gray-200 shadow-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Transactions</CardTitle>
-              </CardHeader>
+            <Card className="border-gray-200">
               <CardContent className="p-0">
-                <div className="border rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-gray-50 hover:bg-gray-50">
-                        <TableHead className="min-w-[180px]">
+                      <TableRow className="bg-gray-50 hover:bg-gray-50 border-b border-gray-200">
+                        <TableHead className="min-w-[180px] font-semibold text-gray-700">
                           <HeaderSort
                             label="Transaction Date"
                             field="transactionDate"
                           />
                         </TableHead>
-                        <TableHead className="min-w-[160px]">
+                        <TableHead className="min-w-[160px] font-semibold text-gray-700">
                           <HeaderSort label="Invoice ID" field="invoiceId" />
                         </TableHead>
-                        <TableHead className="min-w-[200px]">
+                        <TableHead className="min-w-[200px] font-semibold text-gray-700">
                           <HeaderSort
                             label="Payment Method"
                             field="paymentMethod"
                           />
                         </TableHead>
-                        <TableHead className="min-w-[140px]">
+                        <TableHead className="min-w-[140px] font-semibold text-gray-700">
                           <HeaderSort label="Type" field="type" />
                         </TableHead>
-                        <TableHead className="min-w-[140px]">
+                        <TableHead className="min-w-[140px] font-semibold text-gray-700">
                           <HeaderSort label="Plan" field="plan" />
                         </TableHead>
-                        <TableHead className="min-w-[120px]">
+                        <TableHead className="min-w-[120px] font-semibold text-gray-700">
                           <HeaderSort label="Currency" field="currency" />
                         </TableHead>
-                        <TableHead className="text-right min-w-[150px]">
+                        <TableHead className="text-right min-w-[150px] font-semibold text-gray-700">
                           <HeaderSort
-                            label="Invoice Amount"
+                            label="Amount"
                             field="invoiceAmount"
                             alignRight
                           />
                         </TableHead>
-                        <TableHead className="min-w-[160px]">
+                        <TableHead className="min-w-[160px] font-semibold text-gray-700">
                           <HeaderSort
-                            label="Service Provider"
+                            label="Provider"
                             field="serviceProvider"
                           />
                         </TableHead>
@@ -776,13 +831,16 @@ export default function Payments() {
                     </TableHeader>
                     <TableBody>
                       {sorted.map((row) => (
-                        <TableRow key={row.id}>
-                          <TableCell className="text-sm text-gray-700">
+                        <TableRow
+                          key={row.id}
+                          className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                        >
+                          <TableCell className="text-sm text-gray-700 font-medium">
                             {row.transactionDate}
                           </TableCell>
-                          <TableCell className="font-mono text-sm flex items-center gap-2">
+                          <TableCell className="font-mono text-sm font-semibold text-gray-900">
                             <button
-                              className="inline-flex items-center gap-1 text-valasys-orange hover:underline"
+                              className="inline-flex items-center gap-2 text-valasys-orange hover:text-orange-700 font-semibold transition-colors"
                               onClick={() => downloadInvoice(row)}
                               aria-label={`Download invoice ${row.invoiceId}`}
                             >
@@ -794,20 +852,22 @@ export default function Payments() {
                             {row.paymentMethod}
                           </TableCell>
                           <TableCell className="text-sm text-gray-700">
-                            {row.type}
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-medium text-xs">
+                              {row.type}
+                            </span>
                           </TableCell>
-                          <TableCell className="text-sm text-gray-700">
+                          <TableCell className="text-sm text-gray-700 font-medium">
                             {row.plan}
                           </TableCell>
-                          <TableCell className="text-sm text-gray-700">
+                          <TableCell className="text-sm text-gray-700 font-semibold">
                             {row.currency}
                           </TableCell>
-                          <TableCell className="text-right font-medium text-gray-900">
+                          <TableCell className="text-right font-bold text-gray-900 text-sm">
                             {row.currency === "USD"
                               ? `$${row.invoiceAmount.toLocaleString()}`
                               : `${row.invoiceAmount.toLocaleString()} ${row.currency}`}
                           </TableCell>
-                          <TableCell className="text-sm text-gray-700">
+                          <TableCell className="text-sm text-gray-700 font-medium">
                             {row.serviceProvider}
                           </TableCell>
                         </TableRow>
@@ -816,9 +876,16 @@ export default function Payments() {
                         <TableRow>
                           <TableCell
                             colSpan={8}
-                            className="text-center py-8 text-sm text-gray-500"
+                            className="text-center py-12 text-sm text-gray-500"
                           >
-                            No transactions match your filters.
+                            <div className="space-y-2">
+                              <p className="font-semibold">
+                                No transactions found
+                              </p>
+                              <p className="text-xs">
+                                Try adjusting your filters
+                              </p>
+                            </div>
                           </TableCell>
                         </TableRow>
                       )}
