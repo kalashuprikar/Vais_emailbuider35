@@ -571,13 +571,17 @@ export function AddPaymentMethodDialog({
                   {isSubmitting ? (
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-4 md:w-5 h-4 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span className="hidden sm:inline">Adding...</span>
+                      <span className="hidden sm:inline">
+                        {isEditMode ? "Updating..." : "Adding..."}
+                      </span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <Check className="w-4 md:w-5 h-4 md:h-5" />
-                      <span className="hidden sm:inline">Add PayPal</span>
-                      <span className="sm:hidden">Add</span>
+                      <span className="hidden sm:inline">
+                        {isEditMode ? "Update PayPal" : "Add PayPal"}
+                      </span>
+                      <span className="sm:hidden">{isEditMode ? "Update" : "Add"}</span>
                     </div>
                   )}
                 </Button>
