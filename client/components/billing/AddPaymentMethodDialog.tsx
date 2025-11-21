@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -115,19 +115,31 @@ export function AddPaymentMethodDialog({
   open,
   onOpenChange,
   onAdd,
+  editingMethod,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (method: PaymentMethod) => void;
+  editingMethod?: PaymentMethod;
 }) {
-  const [paymentType, setPaymentType] = useState<"card" | "paypal">("card");
+  const isEditMode = !!editingMethod;
+  const initialPaymentType: "card" | "paypal" = editingMethod
+    ? editingMethod.type === "paypal"
+      ? "paypal"
+      : "card"
+    : "card";
+
+  const [paymentType, setPaymentType] = useState<"card" | "paypal">(
+    initialPaymentType,
+  );
   const [formData, setFormData] = useState<AddPaymentFormData>({
-    cardholderName: "",
-    cardNumber: "",
-    expiryDate: "",
+    cardholderName: editingMethod?.cardholderName || "",
+    cardNumber: editingMethod?.cardNumber || "",
+    expiryDate: editingMethod?.expiryDate || "",
     cvc: "",
     country: "United States",
-    paypalEmail: "",
+    paypalEmail:
+      editingMethod?.type === "paypal" ? editingMethod.cardNumber : "",
   });
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -136,6 +148,22 @@ export function AddPaymentMethodDialog({
     () => getCardNetworkFromNumber(formData.cardNumber),
     [formData.cardNumber],
   );
+
+  useEffect(() => {
+    if (open && editingMethod) {
+      setPaymentType(editingMethod.type === "paypal" ? "paypal" : "card");
+      setFormData({
+        cardholderName: editingMethod.cardholderName || "",
+        cardNumber: editingMethod.cardNumber || "",
+        expiryDate: editingMethod.expiryDate || "",
+        cvc: "",
+        country: "United States",
+        paypalEmail:
+          editingMethod.type === "paypal" ? editingMethod.cardNumber : "",
+      });
+      setErrors([]);
+    }
+  }, [editingMethod, open]);
 
   const getErrorMessage = (field: keyof AddPaymentFormData): string => {
     return errors.find((e) => e.field === field)?.message || "";
@@ -163,7 +191,14 @@ export function AddPaymentMethodDialog({
   };
 
   const handleAddCard = async () => {
-    const validationErrors = validateCardForm(formData);
+    let validationErrors = validateCardForm(formData);
+
+    if (isEditMode) {
+      validationErrors = validationErrors.filter(
+        (e) => e.field !== "cardNumber" && e.field !== "cvc",
+      );
+    }
+
     setErrors(validationErrors);
 
     if (validationErrors.length > 0) return;
@@ -172,16 +207,17 @@ export function AddPaymentMethodDialog({
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     const newMethod: PaymentMethod = {
-      id: `pm_${Date.now()}`,
+      id: editingMethod?.id || `pm_${Date.now()}`,
       type: "credit_card",
       cardNetwork: cardNetwork || "Card",
       cardNumber: formData.cardNumber.slice(-4),
       expiryDate: formData.expiryDate,
       cardholderName: formData.cardholderName,
-      isDefault: false,
-      lastUsed: new Date().toISOString().split("T")[0],
-      status: "active",
-      autopayEnabled: true,
+      isDefault: editingMethod?.isDefault ?? false,
+      lastUsed:
+        editingMethod?.lastUsed || new Date().toISOString().split("T")[0],
+      status: editingMethod?.status ?? "active",
+      autopayEnabled: editingMethod?.autopayEnabled ?? true,
     };
 
     onAdd(newMethod);
@@ -200,15 +236,16 @@ export function AddPaymentMethodDialog({
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     const newMethod: PaymentMethod = {
-      id: `pm_${Date.now()}`,
+      id: editingMethod?.id || `pm_${Date.now()}`,
       type: "paypal",
       cardNumber: formData.paypalEmail,
       expiryDate: "",
       cardholderName: "PayPal Account",
-      isDefault: false,
-      lastUsed: new Date().toISOString().split("T")[0],
-      status: "active",
-      autopayEnabled: true,
+      isDefault: editingMethod?.isDefault ?? false,
+      lastUsed:
+        editingMethod?.lastUsed || new Date().toISOString().split("T")[0],
+      status: editingMethod?.status ?? "active",
+      autopayEnabled: editingMethod?.autopayEnabled ?? true,
     };
 
     onAdd(newMethod);
@@ -240,10 +277,12 @@ export function AddPaymentMethodDialog({
       <DialogContent className="max-w-lg w-full mx-2 overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-xl md:text-2xl font-bold bg-gradient-to-r from-valasys-orange to-valasys-orange-light bg-clip-text text-transparent">
-            Add Payment Method
+            {isEditMode ? "Edit Payment Method" : "Add Payment Method"}
           </DialogTitle>
           <p className="text-xs md:text-sm text-gray-600 mt-2">
-            Choose your preferred payment method to get started
+            {isEditMode
+              ? "Update your payment method details"
+              : "Choose your preferred payment method to get started"}
           </p>
         </DialogHeader>
 
@@ -341,7 +380,10 @@ export function AddPaymentMethodDialog({
                       placeholder="1234 1234 1234 1234"
                       value={formData.cardNumber}
                       onChange={handleCardNumberChange}
+                      disabled={isEditMode}
                       className={`h-10 md:h-12 text-sm md:text-base font-mono tracking-wider transition-all border-2 focus:ring-2 focus:ring-valasys-orange/30 ${
+                        isEditMode ? "bg-gray-100 cursor-not-allowed" : ""
+                      } ${
                         getErrorMessage("cardNumber")
                           ? "border-red-500 focus:border-red-500"
                           : "border-gray-200 focus:border-valasys-orange"
@@ -395,7 +437,10 @@ export function AddPaymentMethodDialog({
                       placeholder="123"
                       value={formData.cvc}
                       onChange={handleCvcChange}
+                      disabled={isEditMode}
                       className={`h-10 md:h-12 text-base md:text-lg font-mono font-bold tracking-widest transition-all border-2 focus:ring-2 focus:ring-valasys-orange/30 ${
+                        isEditMode ? "bg-gray-100 cursor-not-allowed" : ""
+                      } ${
                         getErrorMessage("cvc")
                           ? "border-red-500 focus:border-red-500"
                           : "border-gray-200 focus:border-valasys-orange"
@@ -479,13 +524,19 @@ export function AddPaymentMethodDialog({
                   {isSubmitting ? (
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-4 md:w-5 h-4 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span className="hidden sm:inline">Adding...</span>
+                      <span className="hidden sm:inline">
+                        {isEditMode ? "Updating..." : "Adding..."}
+                      </span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <Check className="w-4 md:w-5 h-4 md:h-5" />
-                      <span className="hidden sm:inline">Add Card</span>
-                      <span className="sm:hidden">Add</span>
+                      <span className="hidden sm:inline">
+                        {isEditMode ? "Update Card" : "Add Card"}
+                      </span>
+                      <span className="sm:hidden">
+                        {isEditMode ? "Update" : "Add"}
+                      </span>
                     </div>
                   )}
                 </Button>
@@ -554,13 +605,19 @@ export function AddPaymentMethodDialog({
                   {isSubmitting ? (
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-4 md:w-5 h-4 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span className="hidden sm:inline">Adding...</span>
+                      <span className="hidden sm:inline">
+                        {isEditMode ? "Updating..." : "Adding..."}
+                      </span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <Check className="w-4 md:w-5 h-4 md:h-5" />
-                      <span className="hidden sm:inline">Add PayPal</span>
-                      <span className="sm:hidden">Add</span>
+                      <span className="hidden sm:inline">
+                        {isEditMode ? "Update PayPal" : "Add PayPal"}
+                      </span>
+                      <span className="sm:hidden">
+                        {isEditMode ? "Update" : "Add"}
+                      </span>
                     </div>
                   )}
                 </Button>

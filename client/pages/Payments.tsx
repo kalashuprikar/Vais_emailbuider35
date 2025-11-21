@@ -33,6 +33,7 @@ import {
   Wifi,
   Shield,
   Landmark,
+  Edit2,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -293,29 +294,20 @@ function getCardGradient(cardNetwork?: string) {
   }
 }
 
-function getCardBorderGradient(cardNetwork?: string) {
-  switch (cardNetwork) {
-    case "Visa":
-      return "linear-gradient(135deg, #3b82f6, #1e40af)";
-    case "Mastercard":
-      return "linear-gradient(135deg, #ef4444, #f97316)";
-    case "American Express":
-      return "linear-gradient(135deg, #1e293b, #0f172a)";
-    default:
-      return "linear-gradient(135deg, #a855f7, #ec4899)";
-  }
-}
-
 function ModernPaymentCard({
   method,
   onDelete,
   onSetDefault,
   onAutopayChange,
+  onEdit,
+  isLastPaymentMethod,
 }: {
   method: PaymentMethod;
   onDelete: (id: string) => void;
   onSetDefault: (id: string) => void;
   onAutopayChange: (id: string, enabled: boolean) => void;
+  onEdit?: (id: string) => void;
+  isLastPaymentMethod?: boolean;
 }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const isPayPal = method.type === "paypal";
@@ -326,17 +318,9 @@ function ModernPaymentCard({
         <div
           className={`relative rounded-2xl overflow-hidden h-52 bg-white transition-all duration-300 transform hover:scale-105 p-6 flex flex-col justify-between ${
             method.isDefault
-              ? "shadow-md hover:shadow-lg"
+              ? "border-2 border-valasys-orange shadow-md hover:shadow-lg"
               : "border-2 border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md"
           }`}
-          style={
-            method.isDefault
-              ? {
-                  border: "3px solid",
-                  borderImage: `${getCardBorderGradient(method.cardNetwork)} 1`,
-                }
-              : undefined
-          }
         >
           <div className="flex items-start justify-between">
             <div className="space-y-1">
@@ -368,10 +352,28 @@ function ModernPaymentCard({
                   <CheckCircle className="w-4 h-4" />
                 </button>
               )}
+              {onEdit && (
+                <button
+                  onClick={() => onEdit(method.id)}
+                  className="p-2 rounded-full bg-blue-100 border border-blue-300 text-blue-600 hover:bg-blue-200 transition-all duration-200"
+                  title="Edit card"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+              )}
               <button
                 onClick={() => setDeleteOpen(true)}
-                className="p-2 rounded-full bg-red-100 border border-red-300 text-red-600 hover:bg-red-200 transition-all duration-200"
-                title="Delete card"
+                disabled={isLastPaymentMethod}
+                className={`p-2 rounded-full border transition-all duration-200 ${
+                  isLastPaymentMethod
+                    ? "bg-red-50 border-red-200 text-red-400 cursor-not-allowed opacity-50"
+                    : "bg-red-100 border-red-300 text-red-600 hover:bg-red-200"
+                }`}
+                title={
+                  isLastPaymentMethod
+                    ? "Cannot delete the only payment method"
+                    : "Delete card"
+                }
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -448,11 +450,14 @@ function ModernPaymentCard({
         <AlertDialogContent className="sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl">
-              Delete Payment Method?
+              {isLastPaymentMethod
+                ? "Cannot Delete Payment Method"
+                : "Delete Payment Method?"}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-base mt-2">
-              This action cannot be undone. You won't be able to use this
-              payment method for future transactions.
+              {isLastPaymentMethod
+                ? "You must keep at least one payment method on file. Please add another payment method before deleting this one."
+                : "This action cannot be undone. You won't be able to use this payment method for future transactions."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 my-4">
@@ -467,10 +472,17 @@ function ModernPaymentCard({
             <AlertDialogCancel className="h-10">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                onDelete(method.id);
-                setDeleteOpen(false);
+                if (!isLastPaymentMethod) {
+                  onDelete(method.id);
+                  setDeleteOpen(false);
+                }
               }}
-              className="bg-red-600 hover:bg-red-700 h-10"
+              disabled={isLastPaymentMethod}
+              className={`h-10 ${
+                isLastPaymentMethod
+                  ? "bg-red-400 cursor-not-allowed opacity-50"
+                  : "bg-red-600 hover:bg-red-700"
+              }`}
             >
               Delete
             </AlertDialogAction>
@@ -487,9 +499,13 @@ export default function Payments() {
   const [planFilter, setPlanFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<SortField>("transactionDate");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [paymentMethodsList, setPaymentMethodsList] =
-    useState<PaymentMethod[]>(paymentMethods);
+  const [paymentMethodsList, setPaymentMethodsList] = useState<PaymentMethod[]>(
+    [],
+  );
   const [addPaymentDialogOpen, setAddPaymentDialogOpen] = useState(false);
+  const [editingMethod, setEditingMethod] = useState<
+    PaymentMethod | undefined
+  >();
 
   const uniqueTypes = useMemo(
     () => Array.from(new Set(rows.map((r) => r.type))).sort(),
@@ -611,7 +627,26 @@ export default function Payments() {
   };
 
   const handleAddPaymentMethod = (method: PaymentMethod) => {
-    setPaymentMethodsList((prev) => [...prev, method]);
+    setPaymentMethodsList((prev) => {
+      if (editingMethod) {
+        return prev.map((pm) => (pm.id === method.id ? method : pm));
+      }
+
+      const isFirstCard = prev.length === 0;
+      const newMethod = isFirstCard
+        ? { ...method, isDefault: true, autopayEnabled: true }
+        : method;
+      return [...prev, newMethod];
+    });
+    setEditingMethod(undefined);
+  };
+
+  const handleEditPaymentMethod = (id: string) => {
+    const method = paymentMethodsList.find((pm) => pm.id === id);
+    if (method) {
+      setEditingMethod(method);
+      setAddPaymentDialogOpen(true);
+    }
   };
 
   const HeaderSort = ({
@@ -658,17 +693,17 @@ export default function Payments() {
         </div>
 
         <Tabs defaultValue="payment-methods" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1">
+          <TabsList className="grid w-auto grid-cols-2 bg-gray-100 p-1">
             <TabsTrigger
               value="payment-methods"
-              className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-valasys-orange data-[state=active]:to-valasys-orange-light data-[state=active]:text-white data-[state=active]:shadow-sm"
             >
               <CreditCard className="w-4 h-4 mr-2" />
               Payment Methods
             </TabsTrigger>
             <TabsTrigger
               value="payment-history"
-              className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-valasys-orange data-[state=active]:to-valasys-orange-light data-[state=active]:text-white data-[state=active]:shadow-sm"
             >
               <Download className="w-4 h-4 mr-2" />
               Transaction History
@@ -723,6 +758,8 @@ export default function Payments() {
                     onDelete={handleDeletePaymentMethod}
                     onSetDefault={handleSetDefaultPaymentMethod}
                     onAutopayChange={handleAutopayChange}
+                    onEdit={handleEditPaymentMethod}
+                    isLastPaymentMethod={paymentMethodsList.length === 1}
                   />
                 ))}
               </div>
@@ -955,8 +992,14 @@ export default function Payments() {
 
         <AddPaymentMethodDialog
           open={addPaymentDialogOpen}
-          onOpenChange={setAddPaymentDialogOpen}
+          onOpenChange={(open) => {
+            setAddPaymentDialogOpen(open);
+            if (!open) {
+              setEditingMethod(undefined);
+            }
+          }}
           onAdd={handleAddPaymentMethod}
+          editingMethod={editingMethod}
         />
       </div>
     </DashboardLayout>
