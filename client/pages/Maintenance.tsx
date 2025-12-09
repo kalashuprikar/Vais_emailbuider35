@@ -44,7 +44,7 @@ export default function Maintenance() {
         {/* Icon */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-valasys-orange to-valasys-blue rounded-full blur-2xl opacity-50"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-valasys-orange to-valasys-blue rounded-full blur-2xl opacity-30"></div>
             <div className="relative bg-gradient-to-br from-valasys-orange to-valasys-blue p-6 rounded-full">
               <Wrench className="w-12 h-12 text-white animate-spin" style={{animationDuration: '3s'}} />
             </div>
@@ -52,26 +52,26 @@ export default function Maintenance() {
         </div>
 
         {/* Main Heading */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-valasys-gray-900 mb-4 tracking-tight">
           Site Under Maintenance
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg sm:text-xl text-valasys-gray-300 mb-8 leading-relaxed">
+        <p className="text-lg sm:text-xl text-valasys-gray-600 mb-8 leading-relaxed">
           We're working hard to bring you an even better experience. Our team is
           currently updating the platform with new features and improvements.
         </p>
 
         {/* Status Card */}
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 sm:p-8 mb-8 hover:bg-white/10 transition-all duration-300">
+        <div className="bg-white/60 backdrop-blur-lg border border-valasys-gray-200 rounded-2xl p-6 sm:p-8 mb-8 hover:shadow-lg transition-all duration-300 shadow-md">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Clock className="w-5 h-5 text-valasys-orange" />
-            <span className="text-valasys-gray-300">Maintenance Duration</span>
+            <span className="text-valasys-gray-700">Maintenance Duration</span>
           </div>
-          <div className="font-mono text-3xl font-bold text-white mb-4">
+          <div className="font-mono text-3xl font-bold text-valasys-blue mb-4">
             {formatTime(timeElapsed)}
           </div>
-          <div className="flex items-center justify-center gap-2 text-sm text-valasys-gray-400">
+          <div className="flex items-center justify-center gap-2 text-sm text-valasys-gray-600">
             <AlertCircle className="w-4 h-4" />
             <span>Expected to be back online shortly</span>
           </div>
