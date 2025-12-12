@@ -35,6 +35,7 @@ import {
   ChevronDown,
   Lock,
   Heart,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
