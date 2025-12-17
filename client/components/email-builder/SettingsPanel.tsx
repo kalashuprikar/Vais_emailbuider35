@@ -2594,9 +2594,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         return (
           <div className="space-y-5">
             <div>
-              <h4 className="text-xs font-bold text-gray-900 mb-3">
-                Code editor
-              </h4>
+              <Label className="text-xs font-semibold text-gray-700 mb-2 block">
+                Content
+              </Label>
+              <p className="text-xs text-gray-600 mb-2">
+                Edit HTML directly. You can also double-click content in preview to edit inline.
+              </p>
               <div className="relative">
                 <div className="absolute left-0 top-0 bottom-0 bg-gray-100 border-r border-gray-300 w-10 flex items-start pt-2">
                   <div className="w-full text-right pr-2">
@@ -2609,8 +2612,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   onChange={(e) =>
                     onBlockUpdate({ ...block, content: e.target.value })
                   }
-                  className="w-full border border-gray-300 rounded pl-12 pr-2 py-2 text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-valasys-orange"
-                  rows={10}
+                  className="w-full border border-gray-300 rounded pl-12 pr-2 py-2 text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
+                  rows={8}
                   placeholder="<div>Your HTML here</div>"
                   style={{ lineHeight: "1.5" }}
                 />
@@ -2873,6 +2876,73 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
 
             <div>
+              <h4 className="text-xs font-bold text-gray-900 mb-3">Borders</h4>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-gray-700 mb-1 block">
+                    Size
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      value={block.borderWidth}
+                      onChange={(e) =>
+                        onBlockUpdate({
+                          ...block,
+                          borderWidth: parseInt(e.target.value),
+                        })
+                      }
+                      className="flex-1 focus:ring-valasys-orange focus:ring-2"
+                    />
+                    <span className="px-2 py-1 text-sm text-gray-600">px</span>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs text-gray-700 mb-1 block">
+                    Color
+                  </Label>
+                  <Input
+                    type="color"
+                    value={block.borderColor}
+                    onChange={(e) =>
+                      onBlockUpdate({ ...block, borderColor: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xs font-bold text-gray-900 mb-3">
+                Rounded corners
+              </h4>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-gray-700 mb-1 block">
+                    Radius
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      value={block.borderRadius}
+                      onChange={(e) =>
+                        onBlockUpdate({
+                          ...block,
+                          borderRadius: parseInt(e.target.value),
+                        })
+                      }
+                      className="flex-1 focus:ring-valasys-orange focus:ring-2"
+                    />
+                    <span className="px-2 py-1 text-sm text-gray-600">px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
               <h4 className="text-xs font-bold text-gray-900 mb-3">Show on</h4>
               <p className="text-xs text-gray-500 mb-3">
                 Display content based on the type of device or other specific
@@ -2913,6 +2983,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 </Button>
               </div>
             </div>
+
           </div>
         );
       case "product":
