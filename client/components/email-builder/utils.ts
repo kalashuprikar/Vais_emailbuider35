@@ -413,6 +413,76 @@ export function createHeaderLogoAndNavigationTemplate(): ContentBlock[] {
   return [createLogoBlock(), nav, createDividerBlock()];
 }
 
+export function createFooterWithSocialTemplate(): ContentBlock[] {
+  const footerContent = `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; padding: 30px 20px; margin: 0;">
+  <tr>
+    <td style="text-align: center;">
+      <div style="margin-bottom: 20px;">
+        <a href="https://facebook.com" style="display: inline-block; margin: 0 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#4267B2">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+        <a href="https://instagram.com" style="display: inline-block; margin: 0 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#E4405F">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0m5.521 17.52c-1.887 1.887-4.401 2.928-7.074 2.928-2.672 0-5.186-1.04-7.074-2.928-1.887-1.887-2.928-4.401-2.928-7.074 0-2.672 1.04-5.186 2.928-7.074 1.887-1.887 4.401-2.928 7.074-2.928 2.672 0 5.186 1.04 7.074 2.928 1.887 1.887 2.928 4.401 2.928 7.074 0 2.672-1.04 5.186-2.928 7.074z"/>
+          </svg>
+        </a>
+        <a href="https://linkedin.com" style="display: inline-block; margin: 0 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#0A66C2">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.725-2.004 1.428-.103.25-.129.599-.129.948v5.429h-3.554s.047-8.814 0-9.752h3.554v1.375c.427-.659 1.191-1.595 2.897-1.595 2.117 0 3.704 1.385 3.704 4.362v5.61zM5.337 8.855c-1.144 0-1.915-.761-1.915-1.715 0-.955.77-1.715 1.958-1.715 1.187 0 1.927.76 1.927 1.715 0 .954-.74 1.715-1.97 1.715zm1.946 11.597H3.392V9.956h3.891v10.496zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
+          </svg>
+        </a>
+        <a href="https://youtube.com" style="display: inline-block; margin: 0 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#FF0000">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </a>
+      </div>
+      <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #000;">Enterprise name</h3>
+      <p style="margin: 0 0 15px 0; font-size: 13px; color: #666; line-height: 1.6;">69 Street Name, 00000, City</p>
+      <p style="margin: 0 0 15px 0; font-size: 12px; color: #999;">You've received it because you've subscribed to our newsletter.</p>
+      <a href="#" style="color: #FF6A00; font-size: 12px; text-decoration: underline;">Unsubscribe</a>
+    </td>
+  </tr>
+</table>`;
+
+  return [createHtmlBlock(footerContent)];
+}
+
+export function createFooterWithContactTemplate(): ContentBlock[] {
+  const footerContent = `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; padding: 30px 20px; margin: 0; border-top: 1px solid #e0e0e0;">
+  <tr>
+    <td style="text-align: left; vertical-align: top; width: 50%; padding-right: 15px;">
+      <h3 style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #000;">Enterprise name</h3>
+      <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.6;">69 Street Name, 00000, City</p>
+    </td>
+    <td style="text-align: right; vertical-align: top; width: 50%; padding-left: 15px;">
+      <p style="margin: 0 0 8px 0; font-size: 12px; color: #666;">
+        <a href="#" style="color: #666; text-decoration: none;">Privacy</a> |
+        <a href="#" style="color: #666; text-decoration: none;">Terms</a> |
+        <a href="#" style="color: #666; text-decoration: none;">Policy</a>
+      </p>
+      <p style="margin: 0 0 5px 0; font-size: 12px; color: #666;">
+        <a href="mailto:contact@enterprise.com" style="color: #666; text-decoration: none;">contact@enterprise.com</a>
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #666;">
+        <a href="tel:+33901230467" style="color: #666; text-decoration: none;">+33 901 23 04 67</a>
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding-top: 15px; border-top: 1px solid #e0e0e0;">
+      <p style="margin: 0; font-size: 11px; color: #999; text-align: center;">
+        <a href="#" style="color: #999; text-decoration: none;">Unsubscribe</a>
+      </p>
+    </td>
+  </tr>
+</table>`;
+
+  return [createHtmlBlock(footerContent)];
+}
+
 export function createTwoColumnCardBlock(): HtmlBlock {
   return {
     type: "html",
