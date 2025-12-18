@@ -32,8 +32,7 @@ export const EmailCanvas: React.FC<EmailCanvasProps> = ({
   onFooterElementSelect,
   onTemplateSubjectChange,
   onBackgroundColorChange,
-  onMoveBlockUp,
-  onMoveBlockDown,
+  onMoveBlock,
   onDuplicateBlock,
   onDeleteBlock,
 }) => {
