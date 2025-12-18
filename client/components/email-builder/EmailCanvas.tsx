@@ -4,18 +4,23 @@ import { Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmailTemplate, ContentBlock } from "./types";
 import { BlockRenderer } from "./BlockRenderer";
+import { BlockActions } from "./BlockActions";
 
 interface EmailCanvasProps {
   template: EmailTemplate;
   templateSubject: string;
   selectedBlockId: string | null;
   selectedFooterElement?: string | null;
-  onAddBlock: (block: ContentBlock) => void;
+  onAddBlock: (block: ContentBlock, position?: number) => void;
   onBlockUpdate: (block: ContentBlock) => void;
   onBlockSelect: (id: string) => void;
   onFooterElementSelect?: (element: string | null) => void;
   onTemplateSubjectChange: (subject: string) => void;
   onBackgroundColorChange: (color: string) => void;
+  onMoveBlockUp?: (index: number) => void;
+  onMoveBlockDown?: (index: number) => void;
+  onDuplicateBlock?: (block: ContentBlock, position: number) => void;
+  onDeleteBlock?: (blockId: string) => void;
 }
 
 export const EmailCanvas: React.FC<EmailCanvasProps> = ({
