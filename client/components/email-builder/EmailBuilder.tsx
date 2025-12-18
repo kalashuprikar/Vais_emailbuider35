@@ -127,38 +127,6 @@ export const EmailBuilder: React.FC<EmailBuilderProps> = ({
     setSelectedBlockId(null);
   }, []);
 
-  const handleMoveBlockUp = useCallback((index: number) => {
-    if (index <= 0) return;
-    setTemplate((prev) => {
-      const newBlocks = [...prev.blocks];
-      [newBlocks[index - 1], newBlocks[index]] = [
-        newBlocks[index],
-        newBlocks[index - 1],
-      ];
-      return {
-        ...prev,
-        blocks: newBlocks,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-  }, []);
-
-  const handleMoveBlockDown = useCallback((index: number) => {
-    setTemplate((prev) => {
-      if (index >= prev.blocks.length - 1) return prev;
-      const newBlocks = [...prev.blocks];
-      [newBlocks[index], newBlocks[index + 1]] = [
-        newBlocks[index + 1],
-        newBlocks[index],
-      ];
-      return {
-        ...prev,
-        blocks: newBlocks,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-  }, []);
-
   const handleDuplicateBlock = useCallback(
     (block: ContentBlock, position: number) => {
       const duplicatedBlock: ContentBlock = {
