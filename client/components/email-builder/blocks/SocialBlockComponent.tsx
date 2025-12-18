@@ -103,6 +103,8 @@ export const SocialBlockComponent: React.FC<SocialBlockComponentProps> = ({
   const iconSize =
     block.size === "small" ? 20 : block.size === "medium" ? 32 : 48;
 
+  const padding = iconSize + 12;
+
   const justifyClass =
     block.alignment === "left"
       ? "justify-start"
@@ -110,16 +112,46 @@ export const SocialBlockComponent: React.FC<SocialBlockComponentProps> = ({
         ? "justify-end"
         : "justify-center";
 
+  const width =
+    block.widthUnit === "%"
+      ? `${block.width}%`
+      : `${block.width}px`;
+
+  const borderRadius = getShapeStyle(block.shape, iconSize);
+
+  const getIconBackgroundColor = (platformName: string) => {
+    if (block.theme === "colored") {
+      return getSocialIconColor(platformName);
+    } else if (block.theme === "outlined") {
+      return "transparent";
+    }
+    return "#f0f0f0";
+  };
+
+  const getIconColor = (platformName: string) => {
+    if (block.theme === "colored") {
+      return "#ffffff";
+    }
+    return getSocialIconColor(platformName);
+  };
+
   return (
     <div
-      className={`relative p-4 transition-all ${
+      className={`relative transition-all ${
         isSelected ? "ring-2 ring-valasys-orange" : ""
       }`}
+      style={{
+        width: width,
+        padding: `${block.padding}px`,
+        margin: `${block.margin}px`,
+      }}
     >
-      <div className={`flex gap-4 ${justifyClass}`}>
+      <div className={`flex gap-${block.spacing} ${justifyClass}`} style={{ gap: `${block.spacing}px` }}>
         {block.platforms.map((platform) => {
-          const iconColor = getSocialIconColor(platform.name);
           const icon = getSocialIcon(platform.name, iconSize);
+          const bgColor = getIconBackgroundColor(platform.name);
+          const iconColor = getIconColor(platform.name);
+          const borderColor = block.theme === "outlined" ? getSocialIconColor(platform.name) : "transparent";
 
           return (
             <a
@@ -130,13 +162,14 @@ export const SocialBlockComponent: React.FC<SocialBlockComponentProps> = ({
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: iconSize + 8,
-                height: iconSize + 8,
-                backgroundColor: "transparent",
-                borderRadius: "50%",
+                width: padding,
+                height: padding,
+                backgroundColor: bgColor,
+                borderRadius: borderRadius,
                 textDecoration: "none",
                 color: iconColor,
                 transition: "transform 0.2s",
+                border: block.theme === "outlined" ? `2px solid ${borderColor}` : "none",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "scale(1.1)";
