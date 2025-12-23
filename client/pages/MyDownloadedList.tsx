@@ -1319,13 +1319,41 @@ export default function MyDownloadedList() {
 
         {/* CRM Instruction Dialog */}
         <Dialog open={crmDialogOpen} onOpenChange={setCrmDialogOpen}>
-          <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Send to CRM</DialogTitle>
-              <DialogDescription>
-                Import "{crmFile?.fileName}.csv" into your preferred CRM using
-                the guided steps below.
-              </DialogDescription>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader className="pb-2">
+              <div className="flex items-center gap-3 mb-2">
+                {selectedCrm === "hubspot" && (
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#FF7A59] text-white text-xs font-bold">
+                    HS
+                  </span>
+                )}
+                {selectedCrm === "salesforce" && (
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#00A1E0] text-white text-xs font-bold">
+                    SF
+                  </span>
+                )}
+                {selectedCrm === "marketo" && (
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#5C4BAF] text-white text-xs font-bold">
+                    MK
+                  </span>
+                )}
+                <div>
+                  <DialogTitle>
+                    Send to{" "}
+                    {selectedCrm === "hubspot"
+                      ? "HubSpot"
+                      : selectedCrm === "salesforce"
+                        ? "Salesforce"
+                        : "Marketo"}
+                  </DialogTitle>
+                  <DialogDescription className="mt-1">
+                    Import CSV file "{crmFile?.fileName}" with{" "}
+                    <span className="font-semibold text-gray-700">
+                      {crmFile?.dataCount.toLocaleString()} records
+                    </span>
+                  </DialogDescription>
+                </div>
+              </div>
             </DialogHeader>
 
             {connectedCrms.length === 0 ? (
