@@ -105,9 +105,9 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({ onAddBlock }) => {
   );
 
   return (
-    <div className="flex flex-col bg-white w-full h-full">
-      <Tabs defaultValue="blocks" className="flex flex-col h-full">
-        <TabsList className="sticky top-0 z-20 flex w-full h-auto rounded-none border-b border-gray-200 bg-white p-0">
+    <div className="flex flex-col bg-white w-full h-full overflow-hidden">
+      <Tabs defaultValue="blocks" className="flex flex-col h-full overflow-hidden">
+        <TabsList className="sticky top-0 z-20 flex w-full h-auto rounded-none border-b border-gray-200 bg-white p-0 flex-shrink-0">
           <TabsTrigger
             value="blocks"
             className="flex-1 rounded-none px-4 py-3 text-gray-600 border-b-2 border-transparent data-[state=active]:border-valasys-orange data-[state=active]:text-gray-900 data-[state=active]:bg-white shadow-none"
