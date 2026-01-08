@@ -305,6 +305,42 @@ export const createPricingFooterBlock = (): LandingPageBlock => ({
 });
 
 // Template block creators that return arrays of blocks
+export const createMeetFramerTemplate = (): LandingPageBlock[] => [
+  createHeroBlock(),
+];
+
+export const createMeetFramerWithButtonsTemplate = (): LandingPageBlock[] => [
+  createHeroBlock(),
+];
+
+export const createLogoTemplate = (): LandingPageBlock[] => [
+  createFeaturesBlock(),
+];
+
+export const createInfiniteCanvasTemplate = (): LandingPageBlock[] => [
+  createAboutBlock(),
+];
+
+export const createInfiniteCanvasTwoColumnTemplate = (): LandingPageBlock[] => [
+  createAboutBlock(),
+];
+
+export const createCanvasPublishTemplate = (): LandingPageBlock[] => [
+  createFeaturesBlock(),
+];
+
+export const createThreeColumnTemplate = (): LandingPageBlock[] => [
+  createFeaturesBlock(),
+];
+
+export const createStatisticsTemplate = (): LandingPageBlock[] => [
+  createHeaderBlock(),
+];
+
+export const createTestimonialTemplate = (): LandingPageBlock[] => [
+  createTestimonialsBlock(),
+];
+
 export const createPricingTemplate = (): LandingPageBlock[] => [
   createPricingBlock(),
 ];
