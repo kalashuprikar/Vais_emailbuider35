@@ -8,7 +8,11 @@ export interface LandingPageBlock {
     | "about"
     | "contact-form"
     | "footer"
-    | "section-spacer";
+    | "section-spacer"
+    | "pricing"
+    | "faq"
+    | "signup"
+    | "pricing-footer";
   properties: Record<string, any>;
   children?: LandingPageBlock[];
 }
