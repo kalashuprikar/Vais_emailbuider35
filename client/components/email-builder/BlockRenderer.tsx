@@ -18,6 +18,7 @@ import { FooterWithSocialBlockComponent } from "./blocks/FooterWithSocialBlockCo
 import { SpacerBlockComponent } from "./blocks/SpacerBlockComponent";
 import { CenteredImageCardBlockComponent } from "./blocks/CenteredImageCardBlockComponent";
 import { SplitImageCardBlockComponent } from "./blocks/SplitImageCardBlockComponent";
+import { TwoColumnCardBlockComponent } from "./blocks/TwoColumnCardBlockComponent";
 
 interface BlockRendererProps {
   block: ContentBlock;
