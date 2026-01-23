@@ -370,7 +370,16 @@ export default function BuildVAISForm() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newSearchName, setNewSearchName] = useState("");
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [blinkingField, setBlinkingField] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Function to trigger blinking on next field
+  const triggerFieldBlink = (fieldName: string) => {
+    setBlinkingField(fieldName);
+    setTimeout(() => {
+      setBlinkingField(null);
+    }, 600); // Duration of 1 blink (0.6s)
+  };
 
   const filteredTopics = intentTopics.filter(
     (topic) =>
@@ -389,6 +398,8 @@ export default function BuildVAISForm() {
           setTimeout(() => element.classList.remove("animate-pulse"), 500);
         }
       }, 100);
+      // Trigger blink on the file upload field
+      triggerFieldBlink("uploadFile");
     }
     setSearchTerm("");
   };
@@ -407,6 +418,8 @@ export default function BuildVAISForm() {
 
     if (validExtensions.includes(fileExtension) && file.size <= maxSize) {
       setFileStatus("valid");
+      // Trigger blink on the Build VAIS button when file is valid
+      triggerFieldBlink("buildVAIS");
     } else {
       setFileStatus("invalid");
     }
@@ -720,12 +733,14 @@ export default function BuildVAISForm() {
                       </Label>
                       <Select
                         value={formData.productSubcategory}
-                        onValueChange={(value) =>
+                        onValueChange={(value) => {
                           setFormData({
                             ...formData,
                             productSubcategory: value,
-                          })
-                        }
+                          });
+                          // Trigger blink on the product category field
+                          triggerFieldBlink("productCategory");
+                        }}
                       >
                         <SelectTrigger
                           className={cn(
@@ -750,11 +765,20 @@ export default function BuildVAISForm() {
                       <Label htmlFor="category">My Product Category</Label>
                       <Select
                         value={formData.productCategory}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, productCategory: value })
-                        }
+                        onValueChange={(value) => {
+                          setFormData({ ...formData, productCategory: value });
+                          // Trigger blink on the geolocation field
+                          triggerFieldBlink("geolocation");
+                        }}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger
+                          className={cn(
+                            blinkingField === "productCategory"
+                              ? "border-blink"
+                              : "",
+                            formData.productCategory ? "border-green-300" : "",
+                          )}
+                        >
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
@@ -784,11 +808,13 @@ export default function BuildVAISForm() {
                               ...formData,
                               geolocation: [...geolocations],
                             });
+                            triggerFieldBlink("intentTopics");
                           } else if (!formData.geolocation.includes(value)) {
                             setFormData({
                               ...formData,
                               geolocation: [...formData.geolocation, value],
                             });
+                            triggerFieldBlink("intentTopics");
                           }
                           setGeoSearchTerm(""); // Clear search after selection
                         }}
@@ -796,6 +822,9 @@ export default function BuildVAISForm() {
                         <SelectTrigger
                           className={cn(
                             "min-h-[40px]",
+                            blinkingField === "geolocation"
+                              ? "border-blink"
+                              : "",
                             formData.geolocation.length > 0
                               ? "border-green-300"
                               : "",
@@ -914,6 +943,7 @@ export default function BuildVAISForm() {
               <Card
                 className={cn(
                   "transition-all duration-200",
+                  blinkingField === "intentTopics" ? "border-blink" : "",
                   currentStep === 2
                     ? "ring-2 ring-valasys-orange/50 shadow-lg"
                     : "",
@@ -1034,7 +1064,13 @@ export default function BuildVAISForm() {
                       <Input
                         placeholder="https://www.bombora.com"
                         value={generateTopicsInput}
-                        onChange={(e) => setGenerateTopicsInput(e.target.value)}
+                        onChange={(e) => {
+                          setGenerateTopicsInput(e.target.value);
+                          // Trigger blink on search field when URL is entered
+                          if (e.target.value.trim().length > 0) {
+                            triggerFieldBlink("searchTopics");
+                          }
+                        }}
                         className="pr-10"
                       />
                       <Button
@@ -1054,7 +1090,10 @@ export default function BuildVAISForm() {
                       placeholder="Search intent topics..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className={cn(
+                        "pl-10",
+                        blinkingField === "searchTopics" ? "border-blink" : "",
+                      )}
                     />
                   </div>
 
@@ -1307,6 +1346,7 @@ export default function BuildVAISForm() {
                 <div
                   className={cn(
                     "border-2 border-dashed rounded-lg p-6 text-center transition-all duration-300 cursor-pointer",
+                    blinkingField === "uploadFile" ? "border-blink" : "",
                     dragActive
                       ? "border-valasys-orange bg-valasys-orange/5 scale-105"
                       : "border-valasys-gray-300 hover:border-valasys-orange hover:bg-valasys-orange/5",
@@ -1454,7 +1494,13 @@ export default function BuildVAISForm() {
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div>
+                    <div
+                      className={cn(
+                        blinkingField === "buildVAIS"
+                          ? "border-2 border-solid border-blink rounded-lg"
+                          : "",
+                      )}
+                    >
                       <Button
                         onClick={handleBuildVAIS}
                         className="w-full bg-valasys-orange hover:bg-valasys-orange/90 transition-all duration-200 transform hover:scale-105"
