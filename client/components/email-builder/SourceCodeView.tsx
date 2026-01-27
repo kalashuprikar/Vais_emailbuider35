@@ -16,6 +16,7 @@ interface SourceCodeViewProps {
 
 export const SourceCodeView: React.FC<SourceCodeViewProps> = ({ template }) => {
   const [copied, setCopied] = useState(false);
+  const [openTooltip, setOpenTooltip] = useState(false);
 
   const htmlContent = renderTemplateToHTML(template);
 
@@ -23,7 +24,11 @@ export const SourceCodeView: React.FC<SourceCodeViewProps> = ({ template }) => {
     try {
       await navigator.clipboard.writeText(htmlContent);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setOpenTooltip(true);
+      setTimeout(() => {
+        setCopied(false);
+        setOpenTooltip(false);
+      }, 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
