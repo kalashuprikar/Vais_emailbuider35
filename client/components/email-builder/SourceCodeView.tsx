@@ -103,7 +103,7 @@ export const SourceCodeView: React.FC<SourceCodeViewProps> = ({ template }) => {
                 {copied ? "Copied!" : "Copy Code"}
               </TooltipContent>
             </Tooltip>
-            <Tooltip>
+            <Tooltip open={openDownloadTooltip} onOpenChange={setOpenDownloadTooltip}>
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
@@ -114,7 +114,7 @@ export const SourceCodeView: React.FC<SourceCodeViewProps> = ({ template }) => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="font-medium" side="top">
-                Download
+                {downloaded ? "Downloaded" : "Download"}
               </TooltipContent>
             </Tooltip>
           </div>
