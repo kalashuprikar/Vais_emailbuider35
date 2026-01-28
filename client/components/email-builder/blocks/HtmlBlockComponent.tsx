@@ -39,11 +39,17 @@ export const HtmlBlockComponent: React.FC<HtmlBlockComponentProps> = ({
         margin: `${block.margin}px`,
         padding: `${block.padding}px`,
         width: block.widthUnit === "%" ? "100%" : "auto",
+        boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
       <div
         style={{
           width: width,
+          boxSizing: "border-box",
+          overflow: "hidden",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
         }}
         dangerouslySetInnerHTML={{
           __html: compiledHTML,
