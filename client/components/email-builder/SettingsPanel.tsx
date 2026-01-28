@@ -769,10 +769,23 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   <Label className="text-xs text-gray-700 mb-1 block">
                     Width
                   </Label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
+                    <button
+                      onClick={() => {
+                        const newWidth = Math.max(1, (block.width ?? 100) - 1);
+                        onBlockUpdate({
+                          ...block,
+                          width: newWidth,
+                        });
+                      }}
+                      className="p-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+                      title="Decrease width"
+                    >
+                      <ChevronDown size={16} />
+                    </button>
                     <Input
                       type="number"
-                      min="0"
+                      min="1"
                       value={block.width ?? 100}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -780,13 +793,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                           onBlockUpdate({ ...block, width: 100 });
                         } else {
                           const num = parseInt(val);
-                          if (!isNaN(num)) {
+                          if (!isNaN(num) && num > 0) {
                             onBlockUpdate({ ...block, width: num });
                           }
                         }
                       }}
                       className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
                     />
+                    <button
+                      onClick={() => {
+                        const newWidth = (block.width ?? 100) + 1;
+                        onBlockUpdate({
+                          ...block,
+                          width: newWidth,
+                        });
+                      }}
+                      className="p-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+                      title="Increase width"
+                    >
+                      <ChevronUp size={16} />
+                    </button>
                     <select
                       value={block.widthUnit ?? "%"}
                       onChange={(e) =>
