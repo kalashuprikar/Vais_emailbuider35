@@ -3795,8 +3795,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     <Input
                       type="text"
                       inputMode="numeric"
-                      value={String(block.width ?? 300)}
+                      value={videoWidthInput}
                       onChange={(e) => {
+                        const inputValue = e.target.value;
+                        setVideoWidthInput(inputValue);
+                      }}
+                      onBlur={(e) => {
                         const inputValue = e.target.value;
                         const numericValue = inputValue.replace(/[^\d]/g, "");
                         if (numericValue === "") {
@@ -3804,6 +3808,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                             ...block,
                             width: 300,
                           });
+                          setVideoWidthInput("300");
                         } else {
                           const num = parseInt(numericValue);
                           const maxValue = block.widthUnit === "%" ? 100 : 1000;
@@ -3812,27 +3817,35 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                               ...block,
                               width: num,
                             });
+                          } else {
+                            onBlockUpdate({
+                              ...block,
+                              width: maxValue,
+                            });
+                            setVideoWidthInput(String(maxValue));
                           }
                         }
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "ArrowUp") {
                           e.preventDefault();
-                          const currentWidth = block.width ?? 300;
+                          const currentWidth = parseInt(videoWidthInput) || 300;
                           const maxValue = block.widthUnit === "%" ? 100 : 1000;
                           const newWidth = Math.min(currentWidth + 1, maxValue);
                           onBlockUpdate({
                             ...block,
                             width: newWidth,
                           });
+                          setVideoWidthInput(String(newWidth));
                         } else if (e.key === "ArrowDown") {
                           e.preventDefault();
-                          const currentWidth = block.width ?? 300;
+                          const currentWidth = parseInt(videoWidthInput) || 300;
                           const newWidth = Math.max(1, currentWidth - 1);
                           onBlockUpdate({
                             ...block,
                             width: newWidth,
                           });
+                          setVideoWidthInput(String(newWidth));
                         }
                       }}
                       className="flex-1 focus:ring-valasys-orange focus:ring-2"
@@ -3861,8 +3874,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     <Input
                       type="text"
                       inputMode="numeric"
-                      value={String(block.height ?? 200)}
+                      value={videoHeightInput}
                       onChange={(e) => {
+                        const inputValue = e.target.value;
+                        setVideoHeightInput(inputValue);
+                      }}
+                      onBlur={(e) => {
                         const inputValue = e.target.value;
                         const numericValue = inputValue.replace(/[^\d]/g, "");
                         if (numericValue === "") {
@@ -3870,6 +3887,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                             ...block,
                             height: 200,
                           });
+                          setVideoHeightInput("200");
                         } else {
                           const num = parseInt(numericValue);
                           if (num <= 1000) {
@@ -3877,26 +3895,34 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                               ...block,
                               height: num,
                             });
+                          } else {
+                            onBlockUpdate({
+                              ...block,
+                              height: 1000,
+                            });
+                            setVideoHeightInput("1000");
                           }
                         }
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "ArrowUp") {
                           e.preventDefault();
-                          const currentHeight = block.height ?? 200;
+                          const currentHeight = parseInt(videoHeightInput) || 200;
                           const newHeight = Math.min(currentHeight + 1, 1000);
                           onBlockUpdate({
                             ...block,
                             height: newHeight,
                           });
+                          setVideoHeightInput(String(newHeight));
                         } else if (e.key === "ArrowDown") {
                           e.preventDefault();
-                          const currentHeight = block.height ?? 200;
+                          const currentHeight = parseInt(videoHeightInput) || 200;
                           const newHeight = Math.max(1, currentHeight - 1);
                           onBlockUpdate({
                             ...block,
                             height: newHeight,
                           });
+                          setVideoHeightInput(String(newHeight));
                         }
                       }}
                       className="flex-1 focus:ring-valasys-orange focus:ring-2"
