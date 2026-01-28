@@ -1508,14 +1508,24 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   </Label>
                   <div className="flex gap-2">
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={block.width ?? 100}
-                      onChange={(e) =>
-                        onBlockUpdate({
-                          ...block,
-                          width: parseInt(e.target.value) || 100,
-                        })
-                      }
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const numericValue = inputValue.replace(/[^\d]/g, "");
+                        if (numericValue === "") {
+                          onBlockUpdate({
+                            ...block,
+                            width: 100,
+                          });
+                        } else {
+                          onBlockUpdate({
+                            ...block,
+                            width: parseInt(numericValue),
+                          });
+                        }
+                      }}
                       className="flex-1 focus:ring-valasys-orange focus:ring-2"
                     />
                     <select
@@ -2095,19 +2105,28 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   <div className="flex gap-2">
                     <Input
                       id="btnWidth"
-                      type="number"
-                      min="0"
-                      value={block.width}
-                      onChange={(e) =>
-                        onBlockUpdate({
-                          ...block,
-                          width: parseInt(e.target.value),
-                        })
-                      }
+                      type="text"
+                      inputMode="numeric"
+                      value={block.width ?? 100}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const numericValue = inputValue.replace(/[^\d]/g, "");
+                        if (numericValue === "") {
+                          onBlockUpdate({
+                            ...block,
+                            width: 100,
+                          });
+                        } else {
+                          onBlockUpdate({
+                            ...block,
+                            width: parseInt(numericValue),
+                          });
+                        }
+                      }}
                       className="flex-1 focus:ring-valasys-orange focus:ring-2"
                     />
                     <select
-                      value={block.widthUnit}
+                      value={block.widthUnit ?? "%"}
                       onChange={(e) =>
                         onBlockUpdate({
                           ...block,
