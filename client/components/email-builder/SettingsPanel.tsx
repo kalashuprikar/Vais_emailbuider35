@@ -144,16 +144,16 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                       id="titleWidth"
                       type="number"
                       min="0"
-                      max={block.widthUnit === "%" ? 100 : 2000}
                       value={
                         isNaN(block.width as any) ? 100 : (block.width ?? 100)
                       }
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value) || 100;
                         onBlockUpdate({
                           ...block,
-                          width: parseInt(e.target.value) || 100,
-                        })
-                      }
+                          width: value,
+                        });
+                      }}
                       className="flex-1 focus:ring-valasys-orange focus:ring-2"
                     />
                     <select
