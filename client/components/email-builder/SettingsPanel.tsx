@@ -1310,31 +1310,65 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-xs font-bold text-gray-900">Visual</h4>
                 <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="imageBlockUpload"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          onBlockUpdate({
+                            ...block,
+                            src: event.target?.result as string,
+                          });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
                   <Button
                     variant="link"
                     size="sm"
                     className="text-xs h-auto p-0 text-valasys-orange"
+                    onClick={() => document.getElementById("imageBlockUpload")?.click()}
                   >
-                    Edit
+                    Upload
                   </Button>
                   <Button
                     variant="link"
                     size="sm"
                     className="text-xs h-auto p-0 text-valasys-orange"
+                    onClick={() => document.getElementById("imageBlockUpload")?.click()}
                   >
                     Replace
                   </Button>
                 </div>
               </div>
-              <div className="bg-gray-50 rounded border border-gray-200 aspect-video flex items-center justify-center mb-3">
-                <div className="text-center">
-                  <div className="text-gray-400 text-xs mb-1">
-                    Image placeholder
+              {(block as any).src ? (
+                <div className="bg-gray-50 rounded border border-gray-200 aspect-video flex items-center justify-center mb-3 overflow-hidden">
+                  <img
+                    src={(block as any).src}
+                    alt="Preview"
+                    className="max-w-full max-h-full"
+                    onError={() => (
+                      <div className="text-gray-400 text-xs">Image failed to load</div>
+                    )}
+                  />
+                </div>
+              ) : (
+                <div className="bg-gray-50 rounded border border-gray-200 aspect-video flex items-center justify-center mb-3">
+                  <div className="text-center">
+                    <div className="text-gray-400 text-xs mb-1">
+                      No image added yet
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               <div className="text-xs text-gray-500 mb-3">
-                1200 x 675 px - 20 KB
+                {(block as any).src ? "Image added" : "Upload or paste URL to add image"}
               </div>
             </div>
 
