@@ -58,9 +58,9 @@ export const EmailCanvas: React.FC<EmailCanvasProps> = ({
     <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
       <div className="max-w-2xl mx-auto">
         {/* Template Settings */}
-        <div className="bg-white border border-gray-200 rounded-t-lg p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+        <div className="bg-white border border-gray-200 rounded-t-lg p-4 overflow-x-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="min-w-0">
               <label
                 htmlFor="subject"
                 className="text-xs font-medium text-gray-700 block"
@@ -73,29 +73,29 @@ export const EmailCanvas: React.FC<EmailCanvasProps> = ({
                 value={templateSubject}
                 onChange={(e) => onTemplateSubjectChange(e.target.value)}
                 placeholder="Email subject"
-                className="text-sm mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
+                className="text-sm mt-1 w-full border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label
                 htmlFor="bgColor"
                 className="text-xs font-medium text-gray-700 block"
               >
                 Background
               </label>
-              <div className="flex gap-2 mt-1">
+              <div className="flex gap-2 mt-1 min-w-0">
                 <input
                   id="bgColor"
                   type="color"
                   value={template.backgroundColor}
                   onChange={(e) => onBackgroundColorChange(e.target.value)}
-                  className="text-sm w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                  className="text-sm w-10 h-10 border border-gray-300 rounded cursor-pointer flex-shrink-0"
                 />
                 <input
                   type="text"
                   value={template.backgroundColor}
                   onChange={(e) => onBackgroundColorChange(e.target.value)}
-                  className="text-sm flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
+                  className="text-sm border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent lg:flex-1 w-20 lg:w-auto"
                   placeholder="#ffffff"
                 />
               </div>
