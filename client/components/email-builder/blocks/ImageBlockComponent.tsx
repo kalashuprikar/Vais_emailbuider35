@@ -52,6 +52,7 @@ export const ImageBlockComponent: React.FC<ImageBlockComponentProps> = ({
           <img
             src={block.src}
             alt={block.alt || "Image"}
+            crossOrigin="anonymous"
             style={{
               width: `${block.width}${block.widthUnit}`,
               height:
