@@ -154,7 +154,7 @@ const DraggableTemplateCard: React.FC<DraggableTemplateProps> = ({
       className={`flex flex-col rounded-lg overflow-hidden transition-all cursor-move ${
         isSelected
           ? "border-2 border-valasys-orange"
-          : "border border-gray-200 hover:border-dashed hover:border-gray-400"
+          : "border border-gray-200 hover:border-dashed hover:border-gray-400 hover:shadow-none"
       } ${isDragging ? "opacity-50" : ""}`}
     >
       <div className="w-full h-40 bg-gray-200 overflow-hidden">
