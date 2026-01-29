@@ -151,7 +151,7 @@ const DraggableTemplateCard: React.FC<DraggableTemplateProps> = ({
   return (
     <div
       ref={drag}
-      className={`flex flex-col rounded-lg overflow-hidden transition-all cursor-move ${
+      className={`flex flex-col rounded-lg overflow-hidden transition-all cursor-move bg-white ${
         isSelected
           ? "border-2 border-valasys-orange"
           : "border border-gray-200"
