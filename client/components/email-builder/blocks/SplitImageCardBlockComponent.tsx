@@ -67,29 +67,48 @@ export const SplitImageCardBlockComponent: React.FC<
     sectionType: "image" | "title" | "description" | "buttonText" | "buttonLink";
   }) => {
     const handleCopy = () => {
-      let contentToCopy = "";
-      if (sectionType === "title") contentToCopy = block.title;
-      else if (sectionType === "description") contentToCopy = block.description;
-      else if (sectionType === "buttonText") contentToCopy = block.buttonText;
-      else if (sectionType === "buttonLink") contentToCopy = block.buttonLink;
-      else if (sectionType === "image") contentToCopy = block.image;
-
-      if (!contentToCopy) {
-        return;
-      }
-
-      try {
-        const textArea = document.createElement("textarea");
-        textArea.value = contentToCopy;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.top = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      } catch (err) {
-        console.error("Copy failed:", err);
+      if (sectionType === "title") {
+        // Duplicate title by adding a line break and repeating it
+        const newTitle = block.title + "\n" + block.title;
+        onBlockUpdate({ ...block, title: newTitle });
+      } else if (sectionType === "description") {
+        // Duplicate description by adding a line break and repeating it
+        const newDescription = block.description + "\n" + block.description;
+        onBlockUpdate({ ...block, description: newDescription });
+      } else if (sectionType === "buttonText") {
+        // Duplicate button text
+        const newButtonText = block.buttonText + " " + block.buttonText;
+        onBlockUpdate({ ...block, buttonText: newButtonText });
+      } else if (sectionType === "buttonLink") {
+        // For link, just copy to clipboard since duplicating a link doesn't make sense
+        try {
+          const textArea = document.createElement("textarea");
+          textArea.value = block.buttonLink;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-9999px";
+          textArea.style.top = "-9999px";
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        } catch (err) {
+          console.error("Copy failed:", err);
+        }
+      } else if (sectionType === "image") {
+        // For image, copy URL to clipboard
+        try {
+          const textArea = document.createElement("textarea");
+          textArea.value = block.image;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-9999px";
+          textArea.style.top = "-9999px";
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        } catch (err) {
+          console.error("Copy failed:", err);
+        }
       }
     };
 
