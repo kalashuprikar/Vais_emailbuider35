@@ -117,6 +117,27 @@ export const LandingPageBuilder: React.FC<LandingPageBuilderProps> = ({
     });
   };
 
+  const handleDuplicateBlock = (blockId: string) => {
+    if (!page) return;
+
+    const blockToClone = page.blocks.find((b) => b.id === blockId);
+    if (!blockToClone) return;
+
+    const duplicatedBlock: LandingPageBlock = {
+      ...JSON.parse(JSON.stringify(blockToClone)),
+      id: `block-${Date.now()}`,
+    };
+
+    const blockIndex = page.blocks.findIndex((b) => b.id === blockId);
+    const newBlocks = [...page.blocks];
+    newBlocks.splice(blockIndex + 1, 0, duplicatedBlock);
+
+    setPage({
+      ...page,
+      blocks: newBlocks,
+    });
+  };
+
   const handleSelectTemplate = (blocks: LandingPageBlock[]) => {
     if (!page) return;
 
