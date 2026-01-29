@@ -374,7 +374,8 @@ export const SplitImageCardBlockComponent: React.FC<
                       onChange={(e) =>
                         handleFieldChange("buttonText", e.target.value)
                       }
-                      onBlur={() => setEditMode(null)}
+                      onBlur={() => setTimeout(() => setEditMode(null), 200)}
+                      onMouseDown={(e) => e.stopPropagation()}
                       autoFocus
                       className="focus:outline-none"
                       style={{ border: "2px solid rgb(255, 106, 0)" }}
