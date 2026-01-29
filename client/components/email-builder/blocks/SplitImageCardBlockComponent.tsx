@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { SplitImageCardBlock } from "../types";
-import { Upload } from "lucide-react";
+import { Upload, Copy, Trash2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface SplitImageCardBlockComponentProps {
   block: SplitImageCardBlock;
@@ -18,6 +19,8 @@ export const SplitImageCardBlockComponent: React.FC<
   const [isHoveringDescription, setIsHoveringDescription] = useState(false);
   const [isHoveringButton, setIsHoveringButton] = useState(false);
   const [isHoveringButtonLink, setIsHoveringButtonLink] = useState(false);
+  const [isHoveringImage, setIsHoveringImage] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState("");
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -44,6 +47,168 @@ export const SplitImageCardBlockComponent: React.FC<
     });
   };
 
+  const handleImageUrlSubmit = () => {
+    const trimmedUrl = imageUrlInput.trim();
+    if (trimmedUrl) {
+      // Validate that it's a proper URL
+      if (
+        trimmedUrl.startsWith("http://") ||
+        trimmedUrl.startsWith("https://")
+      ) {
+        onBlockUpdate({ ...block, image: trimmedUrl });
+        setImageUrlInput("");
+      } else {
+        alert("Please enter a valid URL starting with http:// or https://");
+      }
+    } else {
+      alert("Please enter an image URL");
+    }
+  };
+
+  const SectionToolbar = ({
+    sectionType,
+  }: {
+    sectionType:
+      | "image"
+      | "title"
+      | "description"
+      | "buttonText"
+      | "buttonLink";
+  }) => {
+    const handleCopy = () => {
+      if (sectionType === "title") {
+        if (block.title) {
+          const newTitle = block.title + "\n" + block.title;
+          onBlockUpdate({ ...block, title: newTitle });
+          toast.success("Title duplicated!");
+        } else {
+          toast.error("Title is empty");
+        }
+      } else if (sectionType === "description") {
+        if (block.description) {
+          const newDescription = block.description + "\n" + block.description;
+          onBlockUpdate({ ...block, description: newDescription });
+          toast.success("Description duplicated!");
+        } else {
+          toast.error("Description is empty");
+        }
+      } else if (sectionType === "buttonText") {
+        if (block.buttonText) {
+          const newButtonText = block.buttonText + " " + block.buttonText;
+          onBlockUpdate({ ...block, buttonText: newButtonText });
+          toast.success("Button text duplicated!");
+        } else {
+          toast.error("Button text is empty");
+        }
+      } else if (sectionType === "buttonLink") {
+        if (block.buttonLink) {
+          try {
+            const textArea = document.createElement("textarea");
+            textArea.value = block.buttonLink;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            toast.success("Link copied to clipboard!");
+          } catch (err) {
+            toast.error("Failed to copy link");
+          }
+        } else {
+          toast.error("Link is empty");
+        }
+      } else if (sectionType === "image") {
+        if (block.image) {
+          try {
+            const textArea = document.createElement("textarea");
+            textArea.value = block.image;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            toast.success("Image URL copied!");
+          } catch (err) {
+            toast.error("Failed to copy image URL");
+          }
+        } else {
+          toast.error("Image URL is empty");
+        }
+      }
+    };
+
+    const handleDelete = () => {
+      if (sectionType === "title") {
+        onBlockUpdate({ ...block, title: "" });
+        setEditMode(null);
+      } else if (sectionType === "description") {
+        onBlockUpdate({ ...block, description: "" });
+        setEditMode(null);
+      } else if (sectionType === "buttonText") {
+        onBlockUpdate({ ...block, buttonText: "" });
+        setEditMode(null);
+      } else if (sectionType === "buttonLink") {
+        onBlockUpdate({ ...block, buttonLink: "" });
+        setEditMode(null);
+      } else if (sectionType === "image") {
+        onBlockUpdate({ ...block, image: "" });
+        setEditMode(null);
+      }
+    };
+
+    const handleAdd = () => {
+      if (sectionType === "title" || sectionType === "description") {
+        setEditMode(sectionType);
+      }
+    };
+
+    return (
+      <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-2 shadow-sm mt-2 w-fit">
+        {sectionType !== "image" && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0 hover:bg-gray-100"
+            title="Add"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleAdd();
+            }}
+          >
+            <Plus className="w-3 h-3 text-gray-700" />
+          </Button>
+        )}
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-gray-100"
+          title="Copy"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleCopy();
+          }}
+        >
+          <Copy className="w-3 h-3 text-gray-700" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-red-100"
+          title="Delete"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDelete();
+          }}
+        >
+          <Trash2 className="w-3 h-3 text-red-600" />
+        </Button>
+      </div>
+    );
+  };
+
   const isImageLeft = block.imagePosition === "left";
 
   return (
@@ -59,15 +224,31 @@ export const SplitImageCardBlockComponent: React.FC<
       <div className="max-w-2xl mx-auto">
         <div className="flex flex-col md:flex-row gap-4 items-stretch">
           {isImageLeft && (
-            <div className="md:w-2/5 relative group">
+            <div
+              className="md:w-2/5"
+              onMouseEnter={() => block.image && setIsHoveringImage(true)}
+              onMouseLeave={() => setIsHoveringImage(false)}
+            >
               {block.image ? (
-                <>
+                <div className="relative group">
                   <img
                     src={block.image}
                     alt={block.imageAlt}
                     className="w-full h-auto rounded"
                   />
-                  <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded">
+                  <label
+                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded"
+                    onClick={(e) => {
+                      // Only open dialog if clicking on the label, not on toolbar buttons
+                      if ((e.target as HTMLElement).tagName === "LABEL") {
+                        (
+                          e.currentTarget.querySelector(
+                            'input[type="file"]',
+                          ) as HTMLInputElement
+                        )?.click();
+                      }
+                    }}
+                  >
                     <Upload className="w-6 h-6 text-white" />
                     <input
                       type="file"
@@ -76,161 +257,230 @@ export const SplitImageCardBlockComponent: React.FC<
                       className="hidden"
                     />
                   </label>
-                </>
+                  {isHoveringImage && (
+                    <div className="absolute bottom-0 left-0 right-0 z-50">
+                      <SectionToolbar sectionType="image" />
+                    </div>
+                  )}
+                </div>
               ) : (
-                <label className="flex items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50">
-                  <div className="flex flex-col items-center justify-center">
-                    <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500">Click to upload</p>
+                <div className="space-y-2">
+                  <label className="flex items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50">
+                    <div className="flex flex-col items-center justify-center">
+                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-500">Click to upload</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Or paste image URL..."
+                      value={imageUrlInput}
+                      onChange={(e) => setImageUrlInput(e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleImageUrlSubmit()
+                      }
+                      className="flex-1 text-xs"
+                    />
+                    <Button
+                      onClick={handleImageUrlSubmit}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      Add
+                    </Button>
                   </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
+                </div>
               )}
             </div>
           )}
 
           <div className={isImageLeft ? "md:w-3/5" : "md:w-3/5 order-first"}>
             <div className="space-y-3 p-4">
-              <div>
-                {editMode === "title" ? (
-                  <Input
-                    value={block.title}
-                    onChange={(e) => handleFieldChange("title", e.target.value)}
-                    onBlur={() => setEditMode(null)}
-                    autoFocus
-                    className="font-bold text-lg focus:outline-none"
-                    style={{ border: "2px solid rgb(255, 106, 0)" }}
-                  />
-                ) : (
-                  <p
-                    onClick={() => setEditMode("title")}
-                    onMouseEnter={() => setIsHoveringTitle(true)}
-                    onMouseLeave={() => setIsHoveringTitle(false)}
-                    className="font-bold text-lg text-gray-900 cursor-pointer p-3 rounded transition-all"
-                    style={{
-                      border: isHoveringTitle
-                        ? "1px dashed rgb(255, 106, 0)"
-                        : "none",
-                    }}
-                  >
-                    {block.title}
-                  </p>
-                )}
-              </div>
+              {(block.title || editMode === "title") && (
+                <div>
+                  {editMode === "title" ? (
+                    <Input
+                      value={block.title}
+                      onChange={(e) =>
+                        handleFieldChange("title", e.target.value)
+                      }
+                      onBlur={() => setTimeout(() => setEditMode(null), 200)}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      autoFocus
+                      className="font-bold text-lg focus:outline-none"
+                      style={{ border: "2px solid rgb(255, 106, 0)" }}
+                    />
+                  ) : (
+                    <p
+                      onClick={() => setEditMode("title")}
+                      onMouseEnter={() => setIsHoveringTitle(true)}
+                      onMouseLeave={() => setIsHoveringTitle(false)}
+                      className="font-bold text-lg text-gray-900 cursor-pointer p-3 rounded transition-all"
+                      style={{
+                        border: isHoveringTitle
+                          ? "1px dashed rgb(255, 106, 0)"
+                          : "none",
+                      }}
+                    >
+                      {block.title}
+                    </p>
+                  )}
+                  {editMode === "title" && (
+                    <SectionToolbar sectionType="title" />
+                  )}
+                </div>
+              )}
 
-              <div>
-                {editMode === "description" ? (
-                  <textarea
-                    value={block.description}
-                    onChange={(e) =>
-                      handleFieldChange("description", e.target.value)
-                    }
-                    onBlur={() => setEditMode(null)}
-                    autoFocus
-                    className="w-full resize-none"
-                    style={{
-                      padding: "1rem",
-                      borderRadius: "0.5rem",
-                      fontSize: "0.875rem",
-                      color: "rgb(55, 65, 81)",
-                      minHeight: "6rem",
-                      border: "2px solid rgb(255, 106, 0)",
-                      boxSizing: "border-box",
-                      outline: "none",
-                      backgroundColor: "white",
-                    }}
-                  />
-                ) : (
-                  <p
-                    onClick={() => setEditMode("description")}
-                    onMouseEnter={() => setIsHoveringDescription(true)}
-                    onMouseLeave={() => setIsHoveringDescription(false)}
-                    className="text-sm text-gray-600 cursor-pointer p-3 rounded whitespace-pre-line transition-all"
-                    style={{
-                      border: isHoveringDescription
-                        ? "1px dashed rgb(255, 106, 0)"
-                        : "none",
-                    }}
-                  >
-                    {block.description}
-                  </p>
-                )}
-              </div>
+              {(block.description || editMode === "description") && (
+                <div>
+                  {editMode === "description" ? (
+                    <textarea
+                      value={block.description}
+                      onChange={(e) =>
+                        handleFieldChange("description", e.target.value)
+                      }
+                      onBlur={() => setTimeout(() => setEditMode(null), 200)}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      autoFocus
+                      className="w-full resize-none"
+                      style={{
+                        padding: "1rem",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.875rem",
+                        color: "rgb(55, 65, 81)",
+                        minHeight: "6rem",
+                        border: "2px solid rgb(255, 106, 0)",
+                        boxSizing: "border-box",
+                        outline: "none",
+                        backgroundColor: "white",
+                      }}
+                    />
+                  ) : (
+                    <p
+                      onClick={() => setEditMode("description")}
+                      onMouseEnter={() => setIsHoveringDescription(true)}
+                      onMouseLeave={() => setIsHoveringDescription(false)}
+                      className="text-sm text-gray-600 cursor-pointer p-3 rounded whitespace-pre-line transition-all"
+                      style={{
+                        border: isHoveringDescription
+                          ? "1px dashed rgb(255, 106, 0)"
+                          : "none",
+                      }}
+                    >
+                      {block.description}
+                    </p>
+                  )}
+                  {editMode === "description" && (
+                    <SectionToolbar sectionType="description" />
+                  )}
+                </div>
+              )}
 
-              <div>
-                {editMode === "buttonText" ? (
-                  <Input
-                    value={block.buttonText}
-                    onChange={(e) =>
-                      handleFieldChange("buttonText", e.target.value)
-                    }
-                    onBlur={() => setEditMode(null)}
-                    autoFocus
-                    className="focus:outline-none"
-                    style={{ border: "2px solid rgb(255, 106, 0)" }}
-                  />
-                ) : (
-                  <button
-                    onClick={() => setEditMode("buttonText")}
-                    onMouseEnter={() => setIsHoveringButton(true)}
-                    onMouseLeave={() => setIsHoveringButton(false)}
-                    className="py-2 px-4 bg-valasys-orange text-white rounded text-sm font-bold hover:bg-orange-600 cursor-pointer transition-all"
-                    style={{
-                      border: isHoveringButton ? "1px dashed white" : "none",
-                    }}
-                  >
-                    {block.buttonText}
-                  </button>
-                )}
-              </div>
+              {(block.buttonText || editMode === "buttonText") && (
+                <div>
+                  {editMode === "buttonText" ? (
+                    <Input
+                      value={block.buttonText}
+                      onChange={(e) =>
+                        handleFieldChange("buttonText", e.target.value)
+                      }
+                      onBlur={() => setTimeout(() => setEditMode(null), 200)}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      autoFocus
+                      className="focus:outline-none"
+                      style={{ border: "2px solid rgb(255, 106, 0)" }}
+                    />
+                  ) : (
+                    <button
+                      onClick={() => setEditMode("buttonText")}
+                      onMouseEnter={() => setIsHoveringButton(true)}
+                      onMouseLeave={() => setIsHoveringButton(false)}
+                      className="py-2 px-4 bg-valasys-orange text-white rounded text-sm font-bold hover:bg-orange-600 cursor-pointer transition-all"
+                      style={{
+                        border: isHoveringButton ? "1px dashed white" : "none",
+                      }}
+                    >
+                      {block.buttonText}
+                    </button>
+                  )}
+                  {editMode === "buttonText" && (
+                    <SectionToolbar sectionType="buttonText" />
+                  )}
+                </div>
+              )}
 
-              <div>
-                {editMode === "buttonLink" ? (
-                  <Input
-                    value={block.buttonLink}
-                    onChange={(e) =>
-                      handleFieldChange("buttonLink", e.target.value)
-                    }
-                    onBlur={() => setEditMode(null)}
-                    autoFocus
-                    placeholder="https://example.com"
-                    className="text-sm focus:outline-none"
-                    style={{ border: "2px solid rgb(255, 106, 0)" }}
-                  />
-                ) : (
-                  <p
-                    onClick={() => setEditMode("buttonLink")}
-                    onMouseEnter={() => setIsHoveringButtonLink(true)}
-                    onMouseLeave={() => setIsHoveringButtonLink(false)}
-                    className="text-xs text-gray-500 cursor-pointer p-3 rounded break-all transition-all"
-                    style={{
-                      border: isHoveringButtonLink
-                        ? "1px dashed rgb(255, 106, 0)"
-                        : "none",
-                    }}
-                  >
-                    {block.buttonLink || "#"}
-                  </p>
-                )}
-              </div>
+              {(block.buttonLink || editMode === "buttonLink") && (
+                <div>
+                  {editMode === "buttonLink" ? (
+                    <Input
+                      value={block.buttonLink}
+                      onChange={(e) =>
+                        handleFieldChange("buttonLink", e.target.value)
+                      }
+                      onBlur={() => setTimeout(() => setEditMode(null), 200)}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      autoFocus
+                      placeholder="https://example.com"
+                      className="text-sm focus:outline-none"
+                      style={{ border: "2px solid rgb(255, 106, 0)" }}
+                    />
+                  ) : (
+                    <p
+                      onClick={() => setEditMode("buttonLink")}
+                      onMouseEnter={() => setIsHoveringButtonLink(true)}
+                      onMouseLeave={() => setIsHoveringButtonLink(false)}
+                      className="text-xs text-gray-500 cursor-pointer p-3 rounded break-all transition-all"
+                      style={{
+                        border: isHoveringButtonLink
+                          ? "1px dashed rgb(255, 106, 0)"
+                          : "none",
+                      }}
+                    >
+                      {block.buttonLink || "#"}
+                    </p>
+                  )}
+                  {editMode === "buttonLink" && (
+                    <SectionToolbar sectionType="buttonLink" />
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
           {!isImageLeft && (
-            <div className="md:w-2/5 relative group">
+            <div
+              className="md:w-2/5"
+              onMouseEnter={() => block.image && setIsHoveringImage(true)}
+              onMouseLeave={() => setIsHoveringImage(false)}
+            >
               {block.image ? (
-                <>
+                <div className="relative group">
                   <img
                     src={block.image}
                     alt={block.imageAlt}
                     className="w-full h-auto rounded"
                   />
-                  <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded">
+                  <label
+                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded"
+                    onClick={(e) => {
+                      // Only open dialog if clicking on the label, not on toolbar buttons
+                      if ((e.target as HTMLElement).tagName === "LABEL") {
+                        (
+                          e.currentTarget.querySelector(
+                            'input[type="file"]',
+                          ) as HTMLInputElement
+                        )?.click();
+                      }
+                    }}
+                  >
                     <Upload className="w-6 h-6 text-white" />
                     <input
                       type="file"
@@ -239,20 +489,47 @@ export const SplitImageCardBlockComponent: React.FC<
                       className="hidden"
                     />
                   </label>
-                </>
+                  {isHoveringImage && (
+                    <div className="absolute bottom-0 left-0 right-0 z-50">
+                      <SectionToolbar sectionType="image" />
+                    </div>
+                  )}
+                </div>
               ) : (
-                <label className="flex items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50">
-                  <div className="flex flex-col items-center justify-center">
-                    <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500">Click to upload</p>
+                <div className="space-y-2">
+                  <label className="flex items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50">
+                    <div className="flex flex-col items-center justify-center">
+                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-500">Click to upload</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Or paste image URL..."
+                      value={imageUrlInput}
+                      onChange={(e) => setImageUrlInput(e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleImageUrlSubmit()
+                      }
+                      className="flex-1 text-xs"
+                    />
+                    <Button
+                      onClick={handleImageUrlSubmit}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      Add
+                    </Button>
                   </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
+                </div>
               )}
             </div>
           )}

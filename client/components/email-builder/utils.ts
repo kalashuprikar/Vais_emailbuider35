@@ -435,7 +435,6 @@ export function createSplitImageCardBlock(
     image:
       "https://cdn.builder.io/o/assets%2Fa4ae9b84255d41ee86b79eb7d0d252c1%2Feea03b1548cc47089bc55e5e6444e1ec?alt=media&token=34f7628a-143a-42b0-aff9-8e380b3e52aa&apiKey=a4ae9b84255d41ee86b79eb7d0d252c1",
     imageAlt: "Card image",
-    label: "New",
     title: "Some title here",
     description:
       "From 25€\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
@@ -448,7 +447,7 @@ export function createSplitImageCardBlock(
     borderWidth: 1,
     borderRadius: 8,
     padding: 20,
-    margin: 16,
+    margin: 12,
     visibility: "all",
   };
 }
@@ -1140,8 +1139,8 @@ export function renderBlockToHTML(block: ContentBlock): string {
         cardBlock.borderWidth > 0
           ? `border: ${cardBlock.borderWidth}px solid ${cardBlock.borderColor};`
           : "";
-      return `<div style="background-color: ${cardBlock.backgroundColor}; border-radius: ${cardBlock.borderRadius}px; ${borderStyle} padding: ${cardBlock.padding}px; margin: ${cardBlock.margin}px; max-width: 500px; margin-left: auto; margin-right: auto;">
-        <img src="${cardBlock.image}" alt="${cardBlock.imageAlt}" style="width: 100%; height: auto; display: block; border-radius: ${cardBlock.borderRadius}px ${cardBlock.borderRadius}px 0 0;" />
+      return `<div style="background-color: ${cardBlock.backgroundColor}; border-radius: ${cardBlock.borderRadius}px; ${borderStyle} padding: ${cardBlock.padding}px; margin: ${cardBlock.margin}px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <img src="${cardBlock.image}" alt="${cardBlock.imageAlt}" style="width: 100%; height: 300px; object-fit: cover; display: block; border-radius: ${cardBlock.borderRadius}px ${cardBlock.borderRadius}px 0 0;" />
         <div style="text-align: center; padding: 20px;">
           <h2 style="margin: 0 0 12px 0; font-size: 24px; font-weight: bold; color: #000;">${cardBlock.title}</h2>
           <p style="margin: 0 0 16px 0; font-size: 14px; color: #666; line-height: 1.5;">${cardBlock.description}</p>
@@ -1158,17 +1157,13 @@ export function renderBlockToHTML(block: ContentBlock): string {
       const imageSide = splitBlock.imagePosition === "left" ? "45%" : "55%";
       const contentSide = splitBlock.imagePosition === "left" ? "55%" : "45%";
       const direction = splitBlock.imagePosition === "left" ? "ltr" : "rtl";
-      const label = splitBlock.label
-        ? `<span style="display: inline-block; background-color: #FF6A00; color: #ffffff; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 8px;">${splitBlock.label}</span>`
-        : "";
       return `<div style="background-color: ${splitBlock.backgroundColor}; border-radius: ${splitBlock.borderRadius}px; ${borderStyle} margin: ${splitBlock.margin}px; max-width: 600px; margin-left: auto; margin-right: auto; overflow: hidden;">
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
           <tr>
-            <td width="${imageSide}" style="vertical-align: middle; padding: 20px; text-align: center;">
-              <img src="${splitBlock.image}" alt="${splitBlock.imageAlt}" style="width: 100%; height: auto; display: block; border-radius: 4px;" />
+            <td width="${imageSide}" style="vertical-align: middle; padding: 15px; text-align: center;">
+              <img src="${splitBlock.image}" alt="${splitBlock.imageAlt}" style="width: 100%; height: 250px; object-fit: cover; display: block; border-radius: 4px;" />
             </td>
-            <td width="${contentSide}" style="vertical-align: top; padding: 20px;">
-              ${label}
+            <td width="${contentSide}" style="vertical-align: top; padding: 15px;">
               <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: bold; color: #000;">${splitBlock.title}</h2>
               <p style="margin: 0 0 16px 0; font-size: 14px; color: #666; line-height: 1.5; white-space: pre-line;">${splitBlock.description}</p>
               <a href="${splitBlock.buttonLink}" style="display: inline-block; background-color: #FF6A00; color: #ffffff; padding: 10px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">${splitBlock.buttonText}</a>
