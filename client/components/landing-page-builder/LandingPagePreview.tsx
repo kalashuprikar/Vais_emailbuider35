@@ -134,6 +134,18 @@ export const LandingPagePreview: React.FC<LandingPagePreviewProps> = ({
             <Button
               size="sm"
               variant="ghost"
+              className="h-8 w-8 p-0 hover:bg-gray-100"
+              title="Duplicate block"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onDuplicateBlock) onDuplicateBlock(block.id);
+              }}
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
               className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
               title="Delete block"
               onClick={(e) => {
