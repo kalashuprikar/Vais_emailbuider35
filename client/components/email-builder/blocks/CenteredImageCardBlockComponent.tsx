@@ -68,6 +68,17 @@ export const CenteredImageCardBlockComponent: React.FC<
       } else if (sectionType === "buttonText") {
         onBlockUpdate({ ...block, buttonText: "" });
         setEditMode(null);
+      } else if (sectionType === "image") {
+        onBlockUpdate({ ...block, image: "" });
+        setEditMode(null);
+      }
+    };
+
+    const handleAdd = () => {
+      // Add text/content to the section
+      if (sectionType === "title" || sectionType === "description") {
+        // For now, just focus on the field when add is clicked
+        setEditMode(sectionType);
       }
     };
 
