@@ -191,6 +191,7 @@ const SectionsPanel: React.FC<SectionsPanelProps> = ({ onAddBlock }) => {
       "Footer & signatures",
     ]),
   );
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
 
   const textImageTemplates: Template[] = [
     {
