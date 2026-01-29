@@ -124,11 +124,9 @@ export const EmailBuilder: React.FC<EmailBuilderProps> = ({
         updatedAt: new Date().toISOString(),
       }));
       setSelectedBlockId(null);
-      if (editingBlockId === selectedBlockId) {
-        setEditingBlockId(null);
-      }
+      setEditingBlockId(null);
     }
-  }, [selectedBlockId, editingBlockId]);
+  }, [selectedBlockId]);
 
   const handleDeleteBlockById = useCallback((blockId: string) => {
     setTemplate((prev) => ({
@@ -137,10 +135,8 @@ export const EmailBuilder: React.FC<EmailBuilderProps> = ({
       updatedAt: new Date().toISOString(),
     }));
     setSelectedBlockId(null);
-    if (editingBlockId === blockId) {
-      setEditingBlockId(null);
-    }
-  }, [editingBlockId]);
+    setEditingBlockId(null);
+  }, []);
 
   const handleDuplicateBlock = useCallback(
     (block: ContentBlock, position: number) => {
