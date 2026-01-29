@@ -63,7 +63,8 @@ export const ImageBlockComponent: React.FC<ImageBlockComponentProps> = ({
       // Handle different width units properly
       if (block.widthUnit === "%") {
         // For percentage, convert pixel delta to percentage
-        const containerWidth = containerRef.current?.getBoundingClientRect().width || 600;
+        const containerWidth =
+          containerRef.current?.getBoundingClientRect().width || 600;
         const deltaPercent = (deltaX / containerWidth) * 100;
         newWidth = Math.max(10, Math.min(100, startWidth + deltaPercent)); // Min 10%, Max 100%
       } else {
