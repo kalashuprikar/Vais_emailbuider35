@@ -167,11 +167,12 @@ export const TwoColumnCardBlockComponent: React.FC<
                     src={card.image}
                     alt={card.imageAlt || "Card image"}
                     style={{
-                      width: card.imageWidth ? `${card.imageWidth}px` : "auto",
+                      width: card.imageWidth ? `${card.imageWidth}px` : "100%",
                       height: card.imageHeight ? `${card.imageHeight}px` : "auto",
                       maxWidth: "100%",
                       display: "block",
                       objectFit: "cover",
+                      borderRadius: `${card.borderRadius}px ${card.borderRadius}px 0 0`,
                     }}
                   />
 
