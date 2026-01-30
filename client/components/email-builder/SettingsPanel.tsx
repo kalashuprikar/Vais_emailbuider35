@@ -1532,8 +1532,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     Type
                   </Label>
                   <select
-                    value={linkType}
-                    onChange={(e) => setLinkType(e.target.value)}
+                    value={(block as any).linkType || "url"}
+                    onChange={(e) =>
+                      onBlockUpdate({
+                        ...block,
+                        linkType: e.target.value as "url" | "page" | "email",
+                      })
+                    }
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
                   >
                     <option value="url">Absolute Link (URL)</option>
@@ -1549,6 +1554,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   <Input
                     type="text"
                     placeholder="https://example.com"
+                    value={(block as any).linkTarget || ""}
+                    onChange={(e) =>
+                      onBlockUpdate({
+                        ...block,
+                        linkTarget: e.target.value,
+                      })
+                    }
                     className="focus:ring-valasys-orange focus:ring-2"
                   />
                 </div>
@@ -1560,6 +1572,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   <Input
                     type="text"
                     placeholder="Hover text"
+                    value={(block as any).linkTooltip || ""}
+                    onChange={(e) =>
+                      onBlockUpdate({
+                        ...block,
+                        linkTooltip: e.target.value,
+                      })
+                    }
                     className="focus:ring-valasys-orange focus:ring-2"
                   />
                 </div>
@@ -1568,6 +1587,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   variant="link"
                   size="sm"
                   className="text-xs h-auto p-0 text-valasys-orange"
+                  onClick={() =>
+                    onBlockUpdate({
+                      ...block,
+                      linkType: undefined,
+                      linkTarget: "",
+                      linkTooltip: "",
+                    })
+                  }
                 >
                   Remove link
                 </Button>
