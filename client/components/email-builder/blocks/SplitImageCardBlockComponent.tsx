@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SplitImageCardBlock } from "../types";
-import { Upload } from "lucide-react";
+import { Upload, Copy, Trash2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
