@@ -154,12 +154,13 @@ export const TwoColumnCardBlockComponent: React.FC<
             style={{
               backgroundColor: card.backgroundColor,
               margin: `${card.margin}px`,
+              borderRadius: `${card.borderRadius}px`,
             }}
             onMouseEnter={() => setHoveredCardId(card.id)}
             onMouseLeave={() => setHoveredCardId(null)}
           >
             {/* Image Section */}
-            <div className="relative">
+            <div className="relative" style={{ borderRadius: `${card.borderRadius}px ${card.borderRadius}px 0 0` }}>
               {card.image ? (
                 <>
                   <img
