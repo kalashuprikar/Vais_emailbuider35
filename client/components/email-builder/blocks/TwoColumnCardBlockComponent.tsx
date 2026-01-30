@@ -164,18 +164,43 @@ export const TwoColumnCardBlockComponent: React.FC<
               {card.image ? (
                 <>
                   <div style={{ padding: "12px" }}>
-                    <img
-                      src={card.image}
-                      alt={card.imageAlt || "Card image"}
-                      style={{
-                        width: card.imageWidth ? `${card.imageWidth}px` : "100%",
-                        height: card.imageHeight ? `${card.imageHeight}px` : "auto",
-                        maxWidth: "100%",
-                        display: "block",
-                        objectFit: "cover",
-                        borderRadius: `${card.borderRadius}px`,
-                      }}
-                    />
+                    {card.imageLink ? (
+                      <a
+                        href={
+                          card.imageLinkType === "email"
+                            ? `mailto:${card.imageLink}`
+                            : card.imageLink
+                        }
+                        style={{ textDecoration: "none" }}
+                      >
+                        <img
+                          src={card.image}
+                          alt={card.imageAlt || "Card image"}
+                          style={{
+                            width: card.imageWidth ? `${card.imageWidth}px` : "100%",
+                            height: card.imageHeight ? `${card.imageHeight}px` : "auto",
+                            maxWidth: "100%",
+                            display: "block",
+                            objectFit: "cover",
+                            borderRadius: `${card.borderRadius}px`,
+                            cursor: "pointer",
+                          }}
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={card.image}
+                        alt={card.imageAlt || "Card image"}
+                        style={{
+                          width: card.imageWidth ? `${card.imageWidth}px` : "100%",
+                          height: card.imageHeight ? `${card.imageHeight}px` : "auto",
+                          maxWidth: "100%",
+                          display: "block",
+                          objectFit: "cover",
+                          borderRadius: `${card.borderRadius}px`,
+                        }}
+                      />
+                    )}
                   </div>
 
                   {/* Image Overlay */}
