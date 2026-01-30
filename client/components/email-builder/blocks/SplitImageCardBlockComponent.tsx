@@ -285,19 +285,22 @@ export const SplitImageCardBlockComponent: React.FC<
                       style={{ border: "2px solid rgb(255, 106, 0)" }}
                     />
                   ) : (
-                    <p
-                      onClick={() => setEditMode("title")}
-                      onMouseEnter={() => setIsHoveringTitle(true)}
-                      onMouseLeave={() => setIsHoveringTitle(false)}
-                      className="font-bold text-lg text-gray-900 cursor-pointer p-3 rounded transition-all"
-                      style={{
-                        border: isHoveringTitle
-                          ? "1px dashed rgb(255, 106, 0)"
-                          : "none",
-                      }}
-                    >
-                      {block.title}
-                    </p>
+                    <>
+                      <p
+                        onClick={() => setEditMode("title")}
+                        onMouseEnter={() => setIsHoveringTitle(true)}
+                        onMouseLeave={() => setIsHoveringTitle(false)}
+                        className="font-bold text-lg text-gray-900 cursor-pointer p-3 rounded transition-all"
+                        style={{
+                          border: isHoveringTitle
+                            ? "1px dashed rgb(255, 106, 0)"
+                            : "none",
+                        }}
+                      >
+                        {block.title}
+                      </p>
+                      {isHoveringTitle && <SectionToolbar sectionType="title" />}
+                    </>
                   )}
                 </div>
               )}
@@ -327,19 +330,22 @@ export const SplitImageCardBlockComponent: React.FC<
                       }}
                     />
                   ) : (
-                    <p
-                      onClick={() => setEditMode("description")}
-                      onMouseEnter={() => setIsHoveringDescription(true)}
-                      onMouseLeave={() => setIsHoveringDescription(false)}
-                      className="text-sm text-gray-600 cursor-pointer p-3 rounded whitespace-pre-line transition-all"
-                      style={{
-                        border: isHoveringDescription
-                          ? "1px dashed rgb(255, 106, 0)"
-                          : "none",
-                      }}
-                    >
-                      {block.description}
-                    </p>
+                    <>
+                      <p
+                        onClick={() => setEditMode("description")}
+                        onMouseEnter={() => setIsHoveringDescription(true)}
+                        onMouseLeave={() => setIsHoveringDescription(false)}
+                        className="text-sm text-gray-600 cursor-pointer p-3 rounded whitespace-pre-line transition-all"
+                        style={{
+                          border: isHoveringDescription
+                            ? "1px dashed rgb(255, 106, 0)"
+                            : "none",
+                        }}
+                      >
+                        {block.description}
+                      </p>
+                      {isHoveringDescription && <SectionToolbar sectionType="description" />}
+                    </>
                   )}
                 </div>
               )}
