@@ -18,7 +18,7 @@ const generateId = () =>
 
 export const CenteredImageCardBlockComponent: React.FC<
   CenteredImageCardBlockComponentProps
-> = ({ block, isSelected, onBlockUpdate, onDuplicate, blockIndex = 0 }) => {
+> = ({ block, isSelected, onBlockUpdate, blockIndex = 0 }) => {
   const [editMode, setEditMode] = useState<string | null>(null);
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
