@@ -278,7 +278,9 @@ export const TwoColumnCardBlockComponent: React.FC<
                 padding: `${Math.max(12, card.padding)}px`,
                 color: card.textColor,
                 margin: 0,
-                border: "none",
+                border: hoveredCardId === card.id && editingField === null ? "2px dotted currentColor" : "2px solid transparent",
+                borderRadius: "4px",
+                transition: "border 0.2s",
               }}
             >
               {editingField === `${card.id}-title` ? (
@@ -289,7 +291,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                   onChange={(e) => setEditingValue(e.target.value)}
                   onBlur={() => handleSaveEdit(card.id, "title")}
                   onKeyPress={(e) => handleKeyPress(e, card.id, "title")}
-                  className="w-full font-bold text-base mb-2 m-0 p-1 border border-valasys-orange rounded"
+                  className="w-full font-bold text-base mb-2 m-0 p-1 border-2 border-valasys-orange rounded"
                   style={{
                     color: card.textColor,
                     backgroundColor: "transparent",
@@ -297,7 +299,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                 />
               ) : (
                 <h3
-                  className="font-bold text-base mb-2 m-0 cursor-pointer hover:opacity-70 hover:border-b-2 hover:border-dotted hover:border-current transition-all"
+                  className="font-bold text-base mb-2 m-0 cursor-pointer hover:opacity-70 transition-opacity"
                   onDoubleClick={() =>
                     handleStartEditingField(card.id, "title")
                   }
@@ -318,7 +320,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                       setEditingValue("");
                     }
                   }}
-                  className="w-full text-xs leading-snug m-0 p-1 border border-valasys-orange rounded"
+                  className="w-full text-xs leading-snug m-0 p-1 border-2 border-valasys-orange rounded"
                   style={{
                     color: card.textColor,
                     backgroundColor: "transparent",
@@ -327,7 +329,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                 />
               ) : (
                 <p
-                  className="text-xs leading-snug m-0 cursor-pointer hover:opacity-70 hover:border-b-2 hover:border-dotted hover:border-current transition-all"
+                  className="text-xs leading-snug m-0 cursor-pointer hover:opacity-70 transition-opacity"
                   onDoubleClick={() =>
                     handleStartEditingField(card.id, "description")
                   }
