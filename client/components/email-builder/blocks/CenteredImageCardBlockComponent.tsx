@@ -289,12 +289,16 @@ export const CenteredImageCardBlockComponent: React.FC<
   };
 
   const handleClearTitle = (id: string) => {
-    const newTitles = titles.map((t) => (t.id === id ? { ...t, content: "" } : t));
+    const newTitles = titles.map((t) =>
+      t.id === id ? { ...t, content: "" } : t,
+    );
     onBlockUpdate({ ...block, titles: newTitles });
   };
 
   const handleClearDescription = (id: string) => {
-    const newDescriptions = descriptions.map((d) => (d.id === id ? { ...d, content: "" } : d));
+    const newDescriptions = descriptions.map((d) =>
+      d.id === id ? { ...d, content: "" } : d,
+    );
     onBlockUpdate({ ...block, descriptions: newDescriptions });
   };
 
