@@ -410,7 +410,7 @@ export default function PerformanceAnalytics() {
         <TabsContent value="funnel" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
             {/* Left: existing bar-style funnel */}
-            <Card className="h-full flex flex-col">
+            <Card className="h-full flex flex-col content-section-hover">
               <CardHeader>
                 <CardTitle className="text-sm sm:text-base">
                   Conversion Funnel Analysis
