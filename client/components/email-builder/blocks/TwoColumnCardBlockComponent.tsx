@@ -426,10 +426,15 @@ export const TwoColumnCardBlockComponent: React.FC<
                     cardId={card.id}
                     fieldName="title"
                     fieldValue={editingValue}
+                    onCopy={(value, fieldName) =>
+                      fieldName === "title"
+                        ? handleCopyStyledTitle(value)
+                        : handleCopyStyledDescription(value)
+                    }
                     onDelete={handleDeleteField}
                   />
                 </>
-              ) : (
+              ) : card.title ? (
                 <div
                   onMouseEnter={() => setHoveredField(`${card.id}-title`)}
                   onMouseLeave={() => setHoveredField(null)}
@@ -458,11 +463,16 @@ export const TwoColumnCardBlockComponent: React.FC<
                       cardId={card.id}
                       fieldName="title"
                       fieldValue={card.title}
+                      onCopy={(value, fieldName) =>
+                        fieldName === "title"
+                          ? handleCopyStyledTitle(value)
+                          : handleCopyStyledDescription(value)
+                      }
                       onDelete={handleDeleteField}
                     />
                   )}
                 </div>
-              )}
+              ) : null}
               {editingField === `${card.id}-description` ? (
                 <>
                   <textarea
