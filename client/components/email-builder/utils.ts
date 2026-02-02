@@ -911,7 +911,7 @@ export function renderBlockToHTML(block: ContentBlock): string {
           let imageHtml = "";
           const contentPadding = Math.max(12, card.padding || 16);
           if (card.image) {
-            const imageTag = `<img src="${card.image}" alt="${card.imageAlt || ""}" style="width: 100%; height: auto; display: block; border-radius: ${card.borderRadius}px; object-fit: cover; border: none; cursor: pointer;" />`;
+            const imageTag = `<img src="${card.image}" alt="${card.imageAlt || ""}" style="width: 100%; height: 100%; display: block; border-radius: ${card.borderRadius}px; object-fit: cover; border: none; cursor: pointer;" />`;
             if (card.imageLink) {
               let href = card.imageLink;
               if (card.imageLinkType === "email") {
@@ -925,21 +925,23 @@ export function renderBlockToHTML(block: ContentBlock): string {
                 card.imageLinkType === "email"
                   ? ""
                   : ` target="_blank" rel="noopener noreferrer"`;
-              imageHtml = `<div style="padding: 12px;">
-                  <a href="${href}"${target} style="text-decoration: none; display: block; width: 100%;">
+              imageHtml = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                  <a href="${href}"${target} style="text-decoration: none; display: block; width: 100%; height: 100%;">
                     ${imageTag}
                   </a>
                 </div>`;
             } else {
-              imageHtml = `<div style="padding: 12px;">
+              imageHtml = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
                   ${imageTag}
                 </div>`;
             }
           }
           return `<div style="width: 48%; display: inline-block; vertical-align: top; padding-right: 10px; box-sizing: border-box;">
-              <div style="background-color: ${card.backgroundColor}; color: ${card.textColor}; border-radius: ${card.borderRadius}px; margin: ${card.margin}px; overflow: hidden; border: none;">
-                ${imageHtml}
-                <div style="padding: ${contentPadding}px; margin: 0; border: none;">
+              <div style="background-color: ${card.backgroundColor}; color: ${card.textColor}; border-radius: ${card.borderRadius}px; margin: ${card.margin}px; overflow: hidden; border: none; display: flex; flex-direction: column; height: 400px;">
+                <div style="height: 160px; overflow: hidden; flex-shrink: 0;">
+                  ${imageHtml}
+                </div>
+                <div style="padding: ${contentPadding}px; margin: 0; border: none; flex: 1; overflow: hidden;">
                   <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">${card.title}</h3>
                   <p style="margin: 0; font-size: 13px; line-height: 1.4;">${card.description}</p>
                 </div>
