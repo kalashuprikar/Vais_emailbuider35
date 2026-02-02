@@ -466,7 +466,7 @@ export default function PerformanceAnalytics() {
 
         {/* Goal Tracking Tab */}
         <TabsContent value="goals" className="space-y-6">
-          <Card>
+          <Card className="content-section-hover">
             <CardHeader>
               <CardTitle className="flex items-center text-sm sm:text-base">
                 <Target className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-valasys-orange flex-shrink-0" />
