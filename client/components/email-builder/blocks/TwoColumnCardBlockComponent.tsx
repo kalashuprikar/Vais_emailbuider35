@@ -246,6 +246,19 @@ export const TwoColumnCardBlockComponent: React.FC<
                       <img
                         src={card.image}
                         alt={card.imageAlt || "Card image"}
+                        onError={(e) => {
+                          const imgElement = e.target as HTMLImageElement;
+                          imgElement.style.display = "none";
+                          const parent = imgElement.parentElement;
+                          if (parent) {
+                            const errorDiv = document.createElement("div");
+                            errorDiv.className =
+                              "w-full h-40 bg-gray-200 flex items-center justify-center text-center p-4";
+                            errorDiv.innerHTML =
+                              '<p style="font-size: 12px; color: #666;">Image failed to load. Check the URL or upload the image directly.</p>';
+                            parent.appendChild(errorDiv);
+                          }
+                        }}
                         style={{
                           width: card.imageWidth
                             ? `${card.imageWidth}px`
