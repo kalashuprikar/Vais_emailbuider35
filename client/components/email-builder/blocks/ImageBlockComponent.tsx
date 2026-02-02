@@ -281,10 +281,10 @@ export const ImageBlockComponent: React.FC<ImageBlockComponentProps> = ({
           )}
         </div>
       ) : (
-        <label className="flex items-center justify-center w-full h-20 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50">
-          <div className="flex flex-col items-center justify-center pt-2 pb-2">
-            <Upload className="w-4 h-4 text-gray-400 mb-1" />
-            <p className="text-xs text-gray-500">Click to upload image</p>
+        <label className="flex items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50">
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            <Upload className="w-8 h-8 text-gray-400 mb-2" />
+            <p className="text-sm text-gray-500">Click to upload image</p>
           </div>
           <input
             type="file"
