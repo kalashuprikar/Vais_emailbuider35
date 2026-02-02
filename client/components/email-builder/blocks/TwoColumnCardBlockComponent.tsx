@@ -256,7 +256,7 @@ export const TwoColumnCardBlockComponent: React.FC<
         {block.cards.map((card, index) => (
           <div
             key={card.id}
-            className="flex-1 rounded-lg overflow-hidden"
+            className="flex-1 rounded-lg overflow-hidden content-section-hover"
             style={{
               backgroundColor: card.backgroundColor,
               margin: `${card.margin}px`,
