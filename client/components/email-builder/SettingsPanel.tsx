@@ -5928,7 +5928,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   </button>
                 ))}
               </div>
-
               <div className="flex gap-2 mb-4">
                 <Button
                   onClick={handleAddCard}
@@ -5964,6 +5963,215 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               </div>
             </div>
 
+            <div>
+              <h4 className="text-xs font-bold text-gray-900 mb-3">Layout</h4>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-gray-700 mb-1 block">
+                    Card Width
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={twoCardWidthInput}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const numericValue = inputValue.replace(/[^\d]/g, "");
+
+                        setTwoCardWidthInput(inputValue);
+
+                        if (numericValue !== "") {
+                          const num = parseInt(numericValue);
+                          const maxValue =
+                            twoColBlock.widthUnit === "%" ? 100 : 1000;
+                          if (num >= 1 && num <= maxValue) {
+                            onBlockUpdate({
+                              ...twoColBlock,
+                              width: num,
+                            });
+                          }
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const inputValue = e.target.value;
+                        const numericValue = inputValue.replace(/[^\d]/g, "");
+                        if (numericValue === "") {
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            width: 100,
+                          });
+                          setTwoCardWidthInput("100");
+                        } else {
+                          const num = parseInt(numericValue);
+                          const maxValue =
+                            twoColBlock.widthUnit === "%" ? 100 : 1000;
+                          if (num > maxValue) {
+                            onBlockUpdate({
+                              ...twoColBlock,
+                              width: maxValue,
+                            });
+                            setTwoCardWidthInput(String(maxValue));
+                          } else if (num < 1) {
+                            onBlockUpdate({
+                              ...twoColBlock,
+                              width: 1,
+                            });
+                            setTwoCardWidthInput("1");
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "ArrowUp") {
+                          e.preventDefault();
+                          const currentWidth =
+                            parseInt(twoCardWidthInput) || 100;
+                          const maxValue =
+                            twoColBlock.widthUnit === "%" ? 100 : 1000;
+                          const newWidth = Math.min(currentWidth + 1, maxValue);
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            width: newWidth,
+                          });
+                          setTwoCardWidthInput(String(newWidth));
+                        } else if (e.key === "ArrowDown") {
+                          e.preventDefault();
+                          const currentWidth =
+                            parseInt(twoCardWidthInput) || 100;
+                          const newWidth = Math.max(1, currentWidth - 1);
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            width: newWidth,
+                          });
+                          setTwoCardWidthInput(String(newWidth));
+                        }
+                      }}
+                      className="flex-1 focus:ring-valasys-orange focus:ring-2"
+                    />
+                    <select
+                      value={twoColBlock.widthUnit}
+                      onChange={(e) =>
+                        onBlockUpdate({
+                          ...twoColBlock,
+                          widthUnit: e.target.value as "px" | "%",
+                        })
+                      }
+                      className="px-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange"
+                    >
+                      <option value="%">%</option>
+                      <option value="px">px</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-700 mb-1 block">
+                    Card Height
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={twoCardHeightInput}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const numericValue = inputValue.replace(/[^\d]/g, "");
+
+                        setTwoCardHeightInput(inputValue);
+
+                        if (numericValue !== "") {
+                          const num = parseInt(numericValue);
+                          const maxValue =
+                            (twoColBlock as any).heightUnit === "%"
+                              ? 100
+                              : 1000;
+                          if (num >= 1 && num <= maxValue) {
+                            onBlockUpdate({
+                              ...twoColBlock,
+                              height: num,
+                            });
+                          }
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const inputValue = e.target.value;
+                        const numericValue = inputValue.replace(/[^\d]/g, "");
+                        if (numericValue === "") {
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            height: 300,
+                          });
+                          setTwoCardHeightInput("300");
+                        } else {
+                          const num = parseInt(numericValue);
+                          const maxValue =
+                            (twoColBlock as any).heightUnit === "%"
+                              ? 100
+                              : 1000;
+                          if (num > maxValue) {
+                            onBlockUpdate({
+                              ...twoColBlock,
+                              height: maxValue,
+                            });
+                            setTwoCardHeightInput(String(maxValue));
+                          } else if (num < 1) {
+                            onBlockUpdate({
+                              ...twoColBlock,
+                              height: 1,
+                            });
+                            setTwoCardHeightInput("1");
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "ArrowUp") {
+                          e.preventDefault();
+                          const currentHeight =
+                            parseInt(twoCardHeightInput) || 300;
+                          const maxValue =
+                            (twoColBlock as any).heightUnit === "%"
+                              ? 100
+                              : 1000;
+                          const newHeight = Math.min(
+                            currentHeight + 1,
+                            maxValue,
+                          );
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            height: newHeight,
+                          });
+                          setTwoCardHeightInput(String(newHeight));
+                        } else if (e.key === "ArrowDown") {
+                          e.preventDefault();
+                          const currentHeight =
+                            parseInt(twoCardHeightInput) || 300;
+                          const newHeight = Math.max(1, currentHeight - 1);
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            height: newHeight,
+                          });
+                          setTwoCardHeightInput(String(newHeight));
+                        }
+                      }}
+                      className="flex-1 focus:ring-valasys-orange focus:ring-2"
+                    />
+                    <select
+                      value={(twoColBlock as any).heightUnit || "px"}
+                      onChange={(e) =>
+                        onBlockUpdate({
+                          ...twoColBlock,
+                          heightUnit: e.target.value as "px" | "%",
+                        })
+                      }
+                      className="px-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange"
+                    >
+                      <option value="%">%</option>
+                      <option value="px">px</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {selectedCard && (
               <>
                 <div>
@@ -5973,13 +6181,38 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   >
                     Card Title
                   </Label>
-                  <Input
-                    id="cardTitle"
-                    value={selectedCard.title}
-                    onChange={(e) => handleCardUpdate("title", e.target.value)}
-                    placeholder="Enter card title"
-                    className="focus:ring-valasys-orange focus:ring-2"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="cardTitle"
+                      value={selectedCard.title}
+                      onChange={(e) =>
+                        handleCardUpdate("title", e.target.value)
+                      }
+                      placeholder="Enter card title"
+                      className="flex-1 focus:ring-valasys-orange focus:ring-2"
+                    />
+                    <Button
+                      onClick={() => {
+                        const newTitle = selectedCard.title + " (copy)";
+                        handleCardUpdate("title", newTitle);
+                      }}
+                      size="sm"
+                      variant="outline"
+                      title="Duplicate title text"
+                      className="text-xs"
+                    >
+                      <Copy className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      onClick={() => handleCardUpdate("title", "")}
+                      size="sm"
+                      variant="outline"
+                      title="Clear title"
+                      className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
                 </div>
 
                 <div>
@@ -5989,16 +6222,41 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   >
                     Card Description
                   </Label>
-                  <textarea
-                    id="cardDescription"
-                    value={selectedCard.description}
-                    onChange={(e) =>
-                      handleCardUpdate("description", e.target.value)
-                    }
-                    placeholder="Enter card description"
-                    rows={4}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
-                  />
+                  <div className="flex gap-2">
+                    <textarea
+                      id="cardDescription"
+                      value={selectedCard.description}
+                      onChange={(e) =>
+                        handleCardUpdate("description", e.target.value)
+                      }
+                      placeholder="Enter card description"
+                      rows={4}
+                      className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
+                    />
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        onClick={() => {
+                          const newDesc = selectedCard.description + " (copy)";
+                          handleCardUpdate("description", newDesc);
+                        }}
+                        size="sm"
+                        variant="outline"
+                        title="Duplicate description text"
+                        className="text-xs"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        onClick={() => handleCardUpdate("description", "")}
+                        size="sm"
+                        variant="outline"
+                        title="Clear description"
+                        className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
@@ -6012,14 +6270,40 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                           src={selectedCard.image}
                           alt={selectedCard.imageAlt || "Card image"}
                           className="w-full h-32 object-cover"
+                          onError={(e) => {
+                            const imgElement = e.target as HTMLImageElement;
+                            imgElement.style.display = "none";
+                            const parent = imgElement.parentElement;
+                            if (parent) {
+                              const errorDiv = document.createElement("div");
+                              errorDiv.className =
+                                "w-full h-32 bg-gray-200 flex items-center justify-center text-center p-2";
+                              errorDiv.innerHTML =
+                                '<p style="font-size: 11px; color: #999;">Image failed to load</p>';
+                              parent.appendChild(errorDiv);
+                            }
+                          }}
                         />
                       </div>
                       <button
                         onClick={() => {
-                          handleCardUpdate("image", "");
-                          handleCardUpdate("imageAlt", "");
-                          handleCardUpdate("imageWidth", undefined);
-                          handleCardUpdate("imageHeight", undefined);
+                          // Batch all updates into a single state update
+                          const updatedCards = twoColBlock.cards.map(
+                            (card: any) =>
+                              card.id === selectedCardId
+                                ? {
+                                    ...card,
+                                    image: "",
+                                    imageAlt: "",
+                                    imageWidth: undefined,
+                                    imageHeight: undefined,
+                                  }
+                                : card,
+                          );
+                          onBlockUpdate({
+                            ...twoColBlock,
+                            cards: updatedCards,
+                          });
                         }}
                         className="w-full px-3 py-2 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
                       >
@@ -6037,11 +6321,21 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                           if (file) {
                             const reader = new FileReader();
                             reader.onload = (event) => {
-                              handleCardUpdate(
-                                "image",
-                                event.target?.result as string,
+                              // Batch both image updates into a single state update
+                              const updatedCards = twoColBlock.cards.map(
+                                (card: any) =>
+                                  card.id === selectedCardId
+                                    ? {
+                                        ...card,
+                                        image: event.target?.result as string,
+                                        imageAlt: file.name,
+                                      }
+                                    : card,
                               );
-                              handleCardUpdate("imageAlt", file.name);
+                              onBlockUpdate({
+                                ...twoColBlock,
+                                cards: updatedCards,
+                              });
                             };
                             reader.readAsDataURL(file);
                           }
@@ -6050,6 +6344,21 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                       />
                     </label>
                   )}
+                </div>
+
+                <div>
+                  <Label className="text-xs font-semibold text-gray-700 mb-2 block">
+                    Image URL
+                  </Label>
+                  <Input
+                    value={selectedCard.image || ""}
+                    onChange={(e) => handleCardUpdate("image", e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="text-xs focus:ring-valasys-orange focus:ring-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Paste an image URL or upload a file above
+                  </p>
                 </div>
 
                 <div>
@@ -6088,7 +6397,72 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
                 <div>
                   <h4 className="text-xs font-bold text-gray-900 mb-3">
-                    Styling
+                    Image Styling
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-xs text-gray-700 mb-2 block">
+                        Image Width
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          min="50"
+                          value={selectedCard.imageWidth || ""}
+                          onChange={(e) =>
+                            handleCardUpdate(
+                              "imageWidth",
+                              e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined,
+                            )
+                          }
+                          placeholder="Auto"
+                          className="flex-1 text-xs focus:ring-valasys-orange focus:ring-2"
+                        />
+                        <span className="px-2 py-1 text-sm text-gray-600">
+                          px
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Leave empty for auto
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs text-gray-700 mb-2 block">
+                        Image Height
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          min="50"
+                          value={selectedCard.imageHeight || ""}
+                          onChange={(e) =>
+                            handleCardUpdate(
+                              "imageHeight",
+                              e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined,
+                            )
+                          }
+                          placeholder="Auto"
+                          className="flex-1 text-xs focus:ring-valasys-orange focus:ring-2"
+                        />
+                        <span className="px-2 py-1 text-sm text-gray-600">
+                          px
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Leave empty for auto
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold text-gray-900 mb-3">
+                    Card Styling
                   </h4>
                   <div className="space-y-3">
                     <div>

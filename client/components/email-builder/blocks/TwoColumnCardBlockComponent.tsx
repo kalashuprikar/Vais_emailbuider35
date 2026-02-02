@@ -1,8 +1,42 @@
 import React, { useState, useRef, useEffect } from "react";
 import React, { useState, useEffect } from "react";
 import { TwoColumnCardBlock } from "../types";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Plus, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+
+// Helper function to copy text to clipboard with fallbacks
+const copyToClipboard = async (text: string): Promise<boolean> => {
+  try {
+    // Modern Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } else {
+      // Fallback: use textarea method for older browsers or non-secure contexts
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const success = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      if (!success) {
+        throw new Error("execCommand copy failed");
+      }
+      return true;
+    }
+  } catch (error) {
+    console.error("Clipboard copy failed:", error);
+    return false;
+  }
+};
 
 interface TwoColumnCardBlockComponentProps {
   block: TwoColumnCardBlock;
@@ -21,6 +55,10 @@ export const TwoColumnCardBlockComponent: React.FC<
   const [startY, setStartY] = useState(0);
   const [startWidth, setStartWidth] = useState(0);
   const [startHeight, setStartHeight] = useState(0);
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState("");
+  const [hoveredField, setHoveredField] = useState<string | null>(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -58,6 +96,169 @@ export const TwoColumnCardBlockComponent: React.FC<
         : card,
     );
     onUpdate({ ...block, cards: updatedCards });
+  };
+
+  const handleStartEditingField = (
+    cardId: string,
+    fieldName: "title" | "description",
+  ) => {
+    const card = block.cards.find((c) => c.id === cardId);
+    if (card) {
+      setEditingField(`${cardId}-${fieldName}`);
+      setEditingValue(card[fieldName]);
+    }
+  };
+
+  const handleSaveEdit = (
+    cardId: string,
+    fieldName: "title" | "description",
+  ) => {
+    if (editingField === `${cardId}-${fieldName}`) {
+      const updatedCards = block.cards.map((card) =>
+        card.id === cardId ? { ...card, [fieldName]: editingValue } : card,
+      );
+      onUpdate({ ...block, cards: updatedCards });
+      setEditingField(null);
+      setEditingValue("");
+    }
+  };
+
+  const handleKeyPress = (
+    e: React.KeyboardEvent,
+    cardId: string,
+    fieldName: "title" | "description",
+  ) => {
+    if (e.key === "Enter" && fieldName === "title") {
+      handleSaveEdit(cardId, fieldName);
+    } else if (e.key === "Escape") {
+      setEditingField(null);
+      setEditingValue("");
+    }
+  };
+
+  const handleDuplicateCard = (cardId: string) => {
+    const cardToDuplicate = block.cards.find((c) => c.id === cardId);
+    if (cardToDuplicate) {
+      const newCard = {
+        ...cardToDuplicate,
+        id: `card-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      };
+      const cardIndex = block.cards.findIndex((c) => c.id === cardId);
+      const newCards = [...block.cards];
+      newCards.splice(cardIndex + 1, 0, newCard);
+      onUpdate({ ...block, cards: newCards });
+    }
+  };
+
+  const handleCopyStyledTitle = async (text: string) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      toast({
+        title: "Copied!",
+        description: "Title copied to clipboard",
+        duration: 2000,
+      });
+    } else {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy to clipboard",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleCopyStyledDescription = async (text: string) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      toast({
+        title: "Copied!",
+        description: "Description copied to clipboard",
+        duration: 2000,
+      });
+    } else {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy to clipboard",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleDeleteCard = (cardId: string) => {
+    if (block.cards.length > 1) {
+      const newCards = block.cards.filter((c) => c.id !== cardId);
+      onUpdate({ ...block, cards: newCards });
+      setFocusedField(null);
+    }
+  };
+
+  const handleDeleteField = (
+    cardId: string,
+    fieldName: "title" | "description",
+  ) => {
+    const updatedCards = block.cards.map((card) =>
+      card.id === cardId ? { ...card, [fieldName]: "" } : card,
+    );
+    onUpdate({ ...block, cards: updatedCards });
+  };
+
+  const FieldToolbar = ({
+    cardId,
+    fieldName,
+    fieldValue,
+    onCopy,
+    onDelete,
+  }: {
+    cardId: string;
+    fieldName: "title" | "description";
+    fieldValue: string;
+    onCopy: (value: string, fieldName: "title" | "description") => void;
+    onDelete: (cardId: string, fieldName: "title" | "description") => void;
+  }) => {
+    return (
+      <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-2 shadow-sm mt-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-gray-100"
+          title="Add new card"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDuplicateCard(cardId);
+          }}
+        >
+          <Plus className="w-3 h-3 text-gray-700" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-gray-100"
+          title="Copy"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCopy(fieldValue, fieldName);
+          }}
+        >
+          <Copy className="w-3 h-3 text-gray-700" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-red-100"
+          title="Delete"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(cardId, fieldName);
+          }}
+        >
+          <Trash2 className="w-3 h-3 text-red-600" />
+        </Button>
+      </div>
+    );
   };
 
   const handleResizeStart = (
@@ -167,91 +368,63 @@ export const TwoColumnCardBlockComponent: React.FC<
         {block.cards.map((card, index) => (
           <div
             key={card.id}
-            className="flex-1 rounded-lg overflow-hidden content-section-hover"
+            className="flex-1 rounded-lg overflow-hidden flex flex-col"
             style={{
               backgroundColor: card.backgroundColor,
               margin: `${card.margin}px`,
               borderRadius: `${card.borderRadius}px`,
+              height: "400px",
             }}
             onMouseEnter={() => setHoveredCardId(card.id)}
             onMouseLeave={() => setHoveredCardId(null)}
           >
             {/* Image Section */}
             <div
-              className="relative"
+              className="relative h-40 flex-shrink-0"
               style={{
                 borderRadius: `${card.borderRadius}px ${card.borderRadius}px 0 0`,
               }}
             >
               {card.image ? (
                 <>
-                  <div style={{ padding: "12px" }}>
-                    {card.imageLink ? (
-                      <a
-                        href={
-                          card.imageLinkType === "email"
-                            ? `mailto:${card.imageLink}`
-                            : card.imageLink.startsWith("http")
-                              ? card.imageLink
-                              : `https://${card.imageLink}`
+                  <div
+                    style={{
+                      padding: "12px",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={card.image}
+                      alt={card.imageAlt || "Card image"}
+                      onError={(e) => {
+                        const imgElement = e.target as HTMLImageElement;
+                        imgElement.style.display = "none";
+                        const parent = imgElement.parentElement;
+                        if (parent) {
+                          const errorDiv = document.createElement("div");
+                          errorDiv.className =
+                            "w-full h-40 bg-gray-200 flex items-center justify-center text-center p-4";
+                          errorDiv.innerHTML =
+                            '<p style="font-size: 12px; color: #666;">Image failed to load. Check the URL or upload the image directly.</p>';
+                          parent.appendChild(errorDiv);
                         }
-                        target={
-                          card.imageLinkType === "email" ? undefined : "_blank"
-                        }
-                        rel={
-                          card.imageLinkType === "email"
-                            ? undefined
-                            : "noopener noreferrer"
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        style={{
-                          textDecoration: "none",
-                          display: "block",
-                          width: "100%",
-                        }}
-                      >
-                        <img
-                          src={card.image}
-                          alt={card.imageAlt || "Card image"}
-                          style={{
-                            width: card.imageWidth
-                              ? `${card.imageWidth}px`
-                              : "100%",
-                            height: card.imageHeight
-                              ? `${card.imageHeight}px`
-                              : "auto",
-                            maxWidth: "100%",
-                            display: "block",
-                            objectFit: "cover",
-                            borderRadius: `${card.borderRadius}px`,
-                            cursor: "pointer",
-                          }}
-                        />
-                      </a>
-                    ) : (
-                      <img
-                        src={card.image}
-                        alt={card.imageAlt || "Card image"}
-                        style={{
-                          width: card.imageWidth
-                            ? `${card.imageWidth}px`
-                            : "100%",
-                          height: card.imageHeight
-                            ? `${card.imageHeight}px`
-                            : "auto",
-                          maxWidth: "100%",
-                          display: "block",
-                          objectFit: "cover",
-                          borderRadius: `${card.borderRadius}px`,
-                        }}
-                      />
-                    )}
+                      }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        maxWidth: "100%",
+                        display: "block",
+                        objectFit: "cover",
+                        borderRadius: `${card.borderRadius}px`,
+                      }}
+                    />
                   </div>
                 </>
               ) : (
-                <label className="flex items-center justify-center w-full h-40 bg-gray-800 cursor-pointer hover:bg-gray-700 transition-colors rounded">
+                <label className="flex items-center justify-center w-full h-full bg-gray-800 cursor-pointer hover:bg-gray-700 transition-colors rounded">
                   <div className="flex flex-col items-center justify-center">
                     <Upload className="w-6 h-6 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-400">Click to upload</p>
@@ -268,6 +441,7 @@ export const TwoColumnCardBlockComponent: React.FC<
 
             {/* Content Section */}
             <div
+              className="flex-1 overflow-hidden"
               style={{
                 padding: `${Math.max(12, card.padding)}px`,
                 color: card.textColor,
@@ -275,8 +449,143 @@ export const TwoColumnCardBlockComponent: React.FC<
                 border: "none",
               }}
             >
-              <h3 className="font-bold text-base mb-2 m-0">{card.title}</h3>
-              <p className="text-xs leading-snug m-0">{card.description}</p>
+              {editingField === `${card.id}-title` ? (
+                <>
+                  <input
+                    type="text"
+                    autoFocus
+                    value={editingValue}
+                    onChange={(e) => setEditingValue(e.target.value)}
+                    onBlur={() => handleSaveEdit(card.id, "title")}
+                    onKeyPress={(e) => handleKeyPress(e, card.id, "title")}
+                    className="w-full font-bold text-base mb-2 m-0 p-1 border-2 border-valasys-orange rounded"
+                    style={{
+                      color: card.textColor,
+                      backgroundColor: "transparent",
+                    }}
+                  />
+                  <FieldToolbar
+                    cardId={card.id}
+                    fieldName="title"
+                    fieldValue={editingValue}
+                    onCopy={(value, fieldName) =>
+                      fieldName === "title"
+                        ? handleCopyStyledTitle(value)
+                        : handleCopyStyledDescription(value)
+                    }
+                    onDelete={handleDeleteField}
+                  />
+                </>
+              ) : card.title ? (
+                <div
+                  onMouseEnter={() => setHoveredField(`${card.id}-title`)}
+                  onMouseLeave={() => setHoveredField(null)}
+                >
+                  <h3
+                    className="font-bold text-base mb-2 m-0 cursor-pointer px-2 py-1 rounded transition-all"
+                    style={{
+                      color: card.textColor,
+                      border:
+                        focusedField === `${card.id}-title`
+                          ? "2px solid rgb(255, 106, 0)"
+                          : hoveredField === `${card.id}-title`
+                            ? "2px dotted rgb(255, 106, 0)"
+                            : "2px solid transparent",
+                    }}
+                    onClick={() => setFocusedField(`${card.id}-title`)}
+                    onDoubleClick={() =>
+                      handleStartEditingField(card.id, "title")
+                    }
+                    title="Double-click to edit"
+                  >
+                    {card.title}
+                  </h3>
+                  {focusedField === `${card.id}-title` && (
+                    <FieldToolbar
+                      cardId={card.id}
+                      fieldName="title"
+                      fieldValue={card.title}
+                      onCopy={(value, fieldName) =>
+                        fieldName === "title"
+                          ? handleCopyStyledTitle(value)
+                          : handleCopyStyledDescription(value)
+                      }
+                      onDelete={handleDeleteField}
+                    />
+                  )}
+                </div>
+              ) : null}
+              {editingField === `${card.id}-description` ? (
+                <>
+                  <textarea
+                    autoFocus
+                    value={editingValue}
+                    onChange={(e) => setEditingValue(e.target.value)}
+                    onBlur={() => handleSaveEdit(card.id, "description")}
+                    onKeyPress={(e) => {
+                      if (e.key === "Escape") {
+                        setEditingField(null);
+                        setEditingValue("");
+                      }
+                    }}
+                    className="w-full text-xs leading-snug m-0 p-1 border-2 border-valasys-orange rounded"
+                    style={{
+                      color: card.textColor,
+                      backgroundColor: "transparent",
+                    }}
+                    rows={3}
+                  />
+                  <FieldToolbar
+                    cardId={card.id}
+                    fieldName="description"
+                    fieldValue={editingValue}
+                    onCopy={(value, fieldName) =>
+                      fieldName === "title"
+                        ? handleCopyStyledTitle(value)
+                        : handleCopyStyledDescription(value)
+                    }
+                    onDelete={handleDeleteField}
+                  />
+                </>
+              ) : card.description ? (
+                <div
+                  onMouseEnter={() => setHoveredField(`${card.id}-description`)}
+                  onMouseLeave={() => setHoveredField(null)}
+                >
+                  <p
+                    className="text-xs leading-snug m-0 cursor-pointer px-2 py-1 rounded transition-all"
+                    style={{
+                      color: card.textColor,
+                      border:
+                        focusedField === `${card.id}-description`
+                          ? "2px solid rgb(255, 106, 0)"
+                          : hoveredField === `${card.id}-description`
+                            ? "2px dotted rgb(255, 106, 0)"
+                            : "2px solid transparent",
+                    }}
+                    onClick={() => setFocusedField(`${card.id}-description`)}
+                    onDoubleClick={() =>
+                      handleStartEditingField(card.id, "description")
+                    }
+                    title="Double-click to edit"
+                  >
+                    {card.description}
+                  </p>
+                  {focusedField === `${card.id}-description` && (
+                    <FieldToolbar
+                      cardId={card.id}
+                      fieldName="description"
+                      fieldValue={card.description}
+                      onCopy={(value, fieldName) =>
+                        fieldName === "title"
+                          ? handleCopyStyledTitle(value)
+                          : handleCopyStyledDescription(value)
+                      }
+                      onDelete={handleDeleteField}
+                    />
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
         ))}

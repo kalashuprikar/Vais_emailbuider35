@@ -3,6 +3,7 @@ import { SplitImageCardBlock } from "../types";
 import { Upload, Copy, Trash2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 interface SplitImageCardBlockComponentProps {
   block: SplitImageCardBlock;
@@ -15,12 +16,45 @@ interface SplitImageCardBlockComponentProps {
 const generateId = () =>
   `section-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
+// Helper function to copy text to clipboard with fallbacks
+const copyToClipboard = async (text: string): Promise<boolean> => {
+  try {
+    // Modern Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } else {
+      // Fallback: use textarea method for older browsers or non-secure contexts
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const success = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      if (!success) {
+        throw new Error("execCommand copy failed");
+      }
+      return true;
+    }
+  } catch (error) {
+    console.error("Clipboard copy failed:", error);
+    return false;
+  }
+};
+
 export const SplitImageCardBlockComponent: React.FC<
   SplitImageCardBlockComponentProps
 > = ({ block, isSelected, onBlockUpdate, blockIndex = 0 }) => {
   const [editMode, setEditMode] = useState<string | null>(null);
   const [isHoveringImage, setIsHoveringImage] = useState(false);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  const [focusedSection, setFocusedSection] = useState<string | null>(null);
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
   const [startX, setStartX] = useState(0);
@@ -160,6 +194,38 @@ export const SplitImageCardBlockComponent: React.FC<
     onBlockUpdate,
   ]);
 
+  const handleCopyText = async (text: string) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      toast({
+        title: "Copied!",
+        description: "Text copied to clipboard",
+        duration: 2000,
+      });
+    } else {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy to clipboard",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleClearTitle = (id: string) => {
+    const newTitles = titles.map((t) =>
+      t.id === id ? { ...t, content: "" } : t,
+    );
+    onBlockUpdate({ ...block, titles: newTitles });
+  };
+
+  const handleClearDescription = (id: string) => {
+    const newDescriptions = descriptions.map((d) =>
+      d.id === id ? { ...d, content: "" } : d,
+    );
+    onBlockUpdate({ ...block, descriptions: newDescriptions });
+  };
+
   const handleAddTitle = () => {
     const newTitles = [...titles, { id: generateId(), content: "" }];
     onBlockUpdate({ ...block, titles: newTitles });
@@ -202,7 +268,7 @@ export const SplitImageCardBlockComponent: React.FC<
     onBlockUpdate({ ...block, buttons: newButtons });
   };
 
-  const handleDuplicateTitle = (id: string) => {
+  const handleDuplicateTitle = async (id: string) => {
     const titleToDuplicate = titles.find((t) => t.id === id);
     if (titleToDuplicate) {
       const newTitles = [...titles];
@@ -213,24 +279,26 @@ export const SplitImageCardBlockComponent: React.FC<
       });
       onBlockUpdate({ ...block, titles: newTitles });
 
-      // Copy to clipboard with styling
-      const styledContent = `<h2 style="font-weight: bold; font-size: 18px; color: rgb(17, 24, 39);">${titleToDuplicate.content}</h2>`;
-      navigator.clipboard
-        .write([
-          new ClipboardItem({
-            "text/html": new Blob([styledContent], { type: "text/html" }),
-            "text/plain": new Blob([titleToDuplicate.content], {
-              type: "text/plain",
-            }),
-          }),
-        ])
-        .catch(() => {
-          navigator.clipboard.writeText(titleToDuplicate.content);
+      // Copy to clipboard
+      const success = await copyToClipboard(titleToDuplicate.content);
+      if (success) {
+        toast({
+          title: "Copied!",
+          description: "Title copied to clipboard",
+          duration: 2000,
         });
+      } else {
+        toast({
+          title: "Copy Failed",
+          description: "Could not copy to clipboard",
+          variant: "destructive",
+          duration: 2000,
+        });
+      }
     }
   };
 
-  const handleDuplicateDescription = (id: string) => {
+  const handleDuplicateDescription = async (id: string) => {
     const descToDuplicate = descriptions.find((d) => d.id === id);
     if (descToDuplicate) {
       const newDescriptions = [...descriptions];
@@ -241,24 +309,26 @@ export const SplitImageCardBlockComponent: React.FC<
       });
       onBlockUpdate({ ...block, descriptions: newDescriptions });
 
-      // Copy to clipboard with styling
-      const styledContent = `<p style="font-size: 14px; color: rgb(75, 85, 99); white-space: pre-wrap;">${descToDuplicate.content}</p>`;
-      navigator.clipboard
-        .write([
-          new ClipboardItem({
-            "text/html": new Blob([styledContent], { type: "text/html" }),
-            "text/plain": new Blob([descToDuplicate.content], {
-              type: "text/plain",
-            }),
-          }),
-        ])
-        .catch(() => {
-          navigator.clipboard.writeText(descToDuplicate.content);
+      // Copy to clipboard
+      const success = await copyToClipboard(descToDuplicate.content);
+      if (success) {
+        toast({
+          title: "Copied!",
+          description: "Description copied to clipboard",
+          duration: 2000,
         });
+      } else {
+        toast({
+          title: "Copy Failed",
+          description: "Could not copy to clipboard",
+          variant: "destructive",
+          duration: 2000,
+        });
+      }
     }
   };
 
-  const handleDuplicateButton = (id: string) => {
+  const handleDuplicateButton = async (id: string) => {
     const buttonToDuplicate = buttons.find((b) => b.id === id);
     if (buttonToDuplicate) {
       const newButtons = [...buttons];
@@ -269,23 +339,23 @@ export const SplitImageCardBlockComponent: React.FC<
       });
       onBlockUpdate({ ...block, buttons: newButtons });
 
-      // Copy to clipboard with styling
-      const styledContent = `<a href="${buttonToDuplicate.link}" style="display: inline-block; padding: 8px 16px; background-color: rgb(255, 106, 35); color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">${buttonToDuplicate.text}</a>`;
-      navigator.clipboard
-        .write([
-          new ClipboardItem({
-            "text/html": new Blob([styledContent], { type: "text/html" }),
-            "text/plain": new Blob(
-              [`${buttonToDuplicate.text} (${buttonToDuplicate.link})`],
-              { type: "text/plain" },
-            ),
-          }),
-        ])
-        .catch(() => {
-          navigator.clipboard.writeText(
-            `${buttonToDuplicate.text} (${buttonToDuplicate.link})`,
-          );
+      // Copy to clipboard
+      const buttonText = `${buttonToDuplicate.text} (${buttonToDuplicate.link})`;
+      const success = await copyToClipboard(buttonText);
+      if (success) {
+        toast({
+          title: "Copied!",
+          description: "Button copied to clipboard",
+          duration: 2000,
         });
+      } else {
+        toast({
+          title: "Copy Failed",
+          description: "Could not copy to clipboard",
+          variant: "destructive",
+          duration: 2000,
+        });
+      }
     }
   };
 
@@ -359,6 +429,63 @@ export const SplitImageCardBlockComponent: React.FC<
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
+          }}
+        >
+          <Trash2 className="w-3 h-3 text-red-600" />
+        </Button>
+      </div>
+    );
+  };
+
+  const FieldToolbar = ({
+    fieldId,
+    fieldValue,
+    onAddTitle,
+    onCopy,
+    onClear,
+  }: {
+    fieldId: string;
+    fieldValue: string;
+    onAddTitle: () => void;
+    onCopy: (value: string) => void;
+    onClear: (id: string) => void;
+  }) => {
+    return (
+      <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-2 shadow-sm mt-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-gray-100"
+          title="Add"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddTitle();
+          }}
+        >
+          <Plus className="w-3 h-3 text-gray-700" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-gray-100"
+          title="Copy"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCopy(fieldValue);
+          }}
+        >
+          <Copy className="w-3 h-3 text-gray-700" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 hover:bg-red-100"
+          title="Delete"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClear(fieldId);
           }}
         >
           <Trash2 className="w-3 h-3 text-red-600" />
@@ -544,17 +671,31 @@ export const SplitImageCardBlockComponent: React.FC<
                           onMouseLeave={() => setHoveredSection(null)}
                         >
                           <p
-                            onClick={() => setEditMode(`title-${title.id}`)}
+                            onClick={() => {
+                              setEditMode(`title-${title.id}`);
+                              setFocusedSection(`title-${title.id}`);
+                            }}
                             className="font-bold text-lg text-gray-900 cursor-pointer p-3 rounded transition-all"
                             style={{
                               border:
-                                hoveredSection === `title-${title.id}`
-                                  ? "1px dashed rgb(255, 106, 0)"
-                                  : "none",
+                                focusedSection === `title-${title.id}`
+                                  ? "2px solid rgb(255, 106, 0)"
+                                  : hoveredSection === `title-${title.id}`
+                                    ? "2px dotted rgb(255, 106, 0)"
+                                    : "none",
                             }}
                           >
                             {title.content}
                           </p>
+                          {focusedSection === `title-${title.id}` && (
+                            <FieldToolbar
+                              fieldId={title.id}
+                              fieldValue={title.content}
+                              onAddTitle={handleAddTitle}
+                              onCopy={handleCopyText}
+                              onClear={handleClearTitle}
+                            />
+                          )}
                         </div>
                       )}
                     </div>
@@ -606,19 +747,31 @@ export const SplitImageCardBlockComponent: React.FC<
                           onMouseLeave={() => setHoveredSection(null)}
                         >
                           <p
-                            onClick={() =>
-                              setEditMode(`description-${desc.id}`)
-                            }
+                            onClick={() => {
+                              setEditMode(`description-${desc.id}`);
+                              setFocusedSection(`description-${desc.id}`);
+                            }}
                             className="text-sm text-gray-600 cursor-pointer p-3 rounded whitespace-pre-line transition-all"
                             style={{
                               border:
-                                hoveredSection === `description-${desc.id}`
-                                  ? "1px dashed rgb(255, 106, 0)"
-                                  : "none",
+                                focusedSection === `description-${desc.id}`
+                                  ? "2px solid rgb(255, 106, 0)"
+                                  : hoveredSection === `description-${desc.id}`
+                                    ? "2px dotted rgb(255, 106, 0)"
+                                    : "none",
                             }}
                           >
                             {desc.content}
                           </p>
+                          {focusedSection === `description-${desc.id}` && (
+                            <FieldToolbar
+                              fieldId={desc.id}
+                              fieldValue={desc.content}
+                              onAddTitle={handleAddDescription}
+                              onCopy={handleCopyText}
+                              onClear={handleClearDescription}
+                            />
+                          )}
                         </div>
                       )}
                     </div>
@@ -690,13 +843,18 @@ export const SplitImageCardBlockComponent: React.FC<
                           onMouseLeave={() => setHoveredSection(null)}
                         >
                           <button
-                            onClick={() => setEditMode(`button-text-${btn.id}`)}
+                            onClick={() => {
+                              setEditMode(`button-text-${btn.id}`);
+                              setFocusedSection(`button-${btn.id}`);
+                            }}
                             className="py-2 px-4 bg-valasys-orange text-white rounded text-sm font-bold hover:bg-orange-600 cursor-pointer transition-all"
                             style={{
                               border:
-                                hoveredSection === `button-${btn.id}`
-                                  ? "1px dashed white"
-                                  : "none",
+                                focusedSection === `button-${btn.id}`
+                                  ? "2px solid white"
+                                  : hoveredSection === `button-${btn.id}`
+                                    ? "2px dotted white"
+                                    : "none",
                             }}
                           >
                             {btn.text}
