@@ -699,13 +699,18 @@ export const SplitImageCardBlockComponent: React.FC<
                           onMouseLeave={() => setHoveredSection(null)}
                         >
                           <button
-                            onClick={() => setEditMode(`button-text-${btn.id}`)}
+                            onClick={() => {
+                              setEditMode(`button-text-${btn.id}`);
+                              setFocusedSection(`button-${btn.id}`);
+                            }}
                             className="py-2 px-4 bg-valasys-orange text-white rounded text-sm font-bold hover:bg-orange-600 cursor-pointer transition-all"
                             style={{
                               border:
-                                hoveredSection === `button-${btn.id}`
-                                  ? "1px dashed white"
-                                  : "none",
+                                focusedSection === `button-${btn.id}`
+                                  ? "2px solid white"
+                                  : hoveredSection === `button-${btn.id}`
+                                    ? "2px dotted white"
+                                    : "none",
                             }}
                           >
                             {btn.text}
