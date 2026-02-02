@@ -551,7 +551,7 @@ export default function InteractiveAnalyticsChart({
 
   return (
     <Card
-      className={`chart-enter hover:shadow-lg transition-all duration-300 ${className}`}
+      className={`chart-enter hover:shadow-lg transition-all duration-300 content-section-hover ${className}`}
     >
       <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
