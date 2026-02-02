@@ -565,9 +565,10 @@ export const CenteredImageCardBlockComponent: React.FC<
                           onClick={() => setEditMode(`title-${title.id}`)}
                           className="flex-1 font-bold text-xl text-gray-900 cursor-pointer transition-all p-3 rounded"
                           style={{
-                            border: hoveredSection === `title-${title.id}`
-                              ? "2px solid rgb(255, 106, 0)"
-                              : "2px dotted rgb(255, 106, 0)",
+                            border:
+                              hoveredSection === `title-${title.id}`
+                                ? "2px solid rgb(255, 106, 0)"
+                                : "2px dotted rgb(255, 106, 0)",
                           }}
                         >
                           {title.content}
@@ -654,9 +655,10 @@ export const CenteredImageCardBlockComponent: React.FC<
                           onClick={() => setEditMode(`description-${desc.id}`)}
                           className="flex-1 text-sm text-gray-600 cursor-pointer transition-all p-3 rounded whitespace-pre-wrap break-words"
                           style={{
-                            border: hoveredSection === `description-${desc.id}`
-                              ? "2px solid rgb(255, 106, 0)"
-                              : "2px dotted rgb(255, 106, 0)",
+                            border:
+                              hoveredSection === `description-${desc.id}`
+                                ? "2px solid rgb(255, 106, 0)"
+                                : "2px dotted rgb(255, 106, 0)",
                           }}
                         >
                           {desc.content}
@@ -752,9 +754,10 @@ export const CenteredImageCardBlockComponent: React.FC<
                             onClick={() => setEditMode(`button-text-${btn.id}`)}
                             className="inline-block py-2 px-6 bg-valasys-orange text-white rounded text-sm font-bold hover:bg-orange-600 cursor-pointer transition-all"
                             style={{
-                              border: hoveredSection === `button-${btn.id}`
-                                ? "2px solid white"
-                                : "2px dotted white",
+                              border:
+                                hoveredSection === `button-${btn.id}`
+                                  ? "2px solid white"
+                                  : "2px dotted white",
                             }}
                           >
                             {btn.text}
