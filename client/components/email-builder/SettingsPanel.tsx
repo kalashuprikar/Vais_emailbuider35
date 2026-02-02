@@ -5925,10 +5925,19 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                       </div>
                       <button
                         onClick={() => {
-                          handleCardUpdate("image", "");
-                          handleCardUpdate("imageAlt", "");
-                          handleCardUpdate("imageWidth", undefined);
-                          handleCardUpdate("imageHeight", undefined);
+                          // Batch all updates into a single state update
+                          const updatedCards = twoColBlock.cards.map((card: any) =>
+                            card.id === selectedCardId
+                              ? {
+                                  ...card,
+                                  image: "",
+                                  imageAlt: "",
+                                  imageWidth: undefined,
+                                  imageHeight: undefined,
+                                }
+                              : card,
+                          );
+                          onBlockUpdate({ ...twoColBlock, cards: updatedCards });
                         }}
                         className="w-full px-3 py-2 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
                       >
