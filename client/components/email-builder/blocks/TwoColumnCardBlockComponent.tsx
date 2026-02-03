@@ -55,9 +55,6 @@ interface TwoColumnCardBlockComponentProps {
   block: TwoColumnCardBlock;
   isSelected: boolean;
   onUpdate: (block: TwoColumnCardBlock) => void;
-  onDuplicate?: (block: TwoColumnCardBlock, position: number) => void;
-  onDelete?: (blockId: string) => void;
-  blockIndex?: number;
 }
 
 export const TwoColumnCardBlockComponent: React.FC<
