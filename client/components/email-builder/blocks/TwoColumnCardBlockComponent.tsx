@@ -519,7 +519,6 @@ export const TwoColumnCardBlockComponent: React.FC<
                     cardId={card.id}
                     fieldName="description"
                     fieldValue={editingValue}
-                    onCopy={(value, fieldName) => handleCopyText(value)}
                     onDelete={handleDeleteField}
                   />
                 </>
