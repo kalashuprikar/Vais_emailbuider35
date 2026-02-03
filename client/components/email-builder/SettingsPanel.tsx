@@ -6223,33 +6223,41 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   >
                     Card Description
                   </Label>
-                  <textarea
-                    id="cardDescription"
-                    value={selectedCard.description || (selectedCard.descriptions?.[0]?.content || "")}
-                    onChange={(e) => {
-                      if (selectedCard.descriptions && selectedCard.descriptions.length > 0) {
-                        // Update first description in array
-                        const updatedCards = twoColBlock.cards.map((card: any) =>
-                          card.id === selectedCardId
-                            ? {
-                                ...card,
-                                descriptions: [
-                                  { ...card.descriptions[0], content: e.target.value },
-                                  ...card.descriptions.slice(1),
-                                ],
-                              }
-                            : card,
-                        );
-                        onBlockUpdate({ ...twoColBlock, cards: updatedCards });
-                      } else {
-                        handleCardUpdate("description", e.target.value);
+                  <div className="flex gap-2">
+                    <textarea
+                      id="cardDescription"
+                      value={selectedCard.description}
+                      onChange={(e) =>
+                        handleCardUpdate("description", e.target.value)
                       }
-                    }}
-                    placeholder="Enter card description"
-                    rows={4}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Use the card editor to add multiple descriptions or duplicate them</p>
+                      placeholder="Enter card description"
+                      rows={4}
+                      className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-valasys-orange focus:border-transparent"
+                    />
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        onClick={() => {
+                          const newDesc = selectedCard.description + " (copy)";
+                          handleCardUpdate("description", newDesc);
+                        }}
+                        size="sm"
+                        variant="outline"
+                        title="Duplicate description text"
+                        className="text-xs"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        onClick={() => handleCardUpdate("description", "")}
+                        size="sm"
+                        variant="outline"
+                        title="Clear description"
+                        className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
