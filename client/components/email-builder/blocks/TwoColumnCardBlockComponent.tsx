@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { TwoColumnCardBlock } from "../types";
-import { Upload, Trash2, Plus } from "lucide-react";
+import { Upload, Trash2, Plus, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -11,11 +11,14 @@ interface TwoColumnCardBlockComponentProps {
   block: TwoColumnCardBlock;
   isSelected: boolean;
   onUpdate: (block: TwoColumnCardBlock) => void;
+  onDuplicate?: (block: TwoColumnCardBlock, position: number) => void;
+  onDelete?: (blockId: string) => void;
+  blockIndex?: number;
 }
 
 export const TwoColumnCardBlockComponent: React.FC<
   TwoColumnCardBlockComponentProps
-> = ({ block, isSelected, onUpdate }) => {
+> = ({ block, isSelected, onUpdate, onDuplicate, onDelete, blockIndex = 0 }) => {
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [hoveredFieldId, setHoveredFieldId] = useState<string | null>(null);
   const [focusedFieldId, setFocusedFieldId] = useState<string | null>(null);
@@ -185,6 +188,16 @@ export const TwoColumnCardBlockComponent: React.FC<
     setEditingValue("");
   };
 
+  const handleBlockDuplicate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDuplicate?.(block, blockIndex + 1);
+  };
+
+  const handleBlockDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete?.(block.id);
+  };
+
   const FieldToolbar = ({
     fieldId,
     cardId,
@@ -210,7 +223,7 @@ export const TwoColumnCardBlockComponent: React.FC<
             onDuplicate(cardId, fieldId);
           }}
         >
-          <Plus className="w-3 h-3 text-gray-700" />
+          <Copy className="w-3 h-3 text-gray-700" />
         </Button>
 
         <Button
