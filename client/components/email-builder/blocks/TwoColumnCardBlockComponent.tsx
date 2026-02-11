@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { TwoColumnCardBlock } from "../types";
-import { Upload, Trash2, Plus, Copy } from "lucide-react";
+import { Upload, Trash2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -498,7 +498,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                           >
                             {title.content || "Add title"}
                           </h3>
-                          {(focusedFieldId === title.id || hoveredFieldId === title.id) && (
+                          {focusedFieldId === title.id && (
                             <FieldToolbar
                               fieldId={title.id}
                               cardId={card.id}
@@ -572,7 +572,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                           >
                             {desc.content || "Add description"}
                           </p>
-                          {(focusedFieldId === desc.id || hoveredFieldId === desc.id) && (
+                          {focusedFieldId === desc.id && (
                             <FieldToolbar
                               fieldId={desc.id}
                               cardId={card.id}
